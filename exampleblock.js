@@ -31,11 +31,6 @@ function block(x,y) {
 
 		fill(0,0,100);
 		rect(this.x,this.y,this.width,this.height);
-		fill(0);
-		textSize(20);
-		textFont("Courier New");
-		strokeWeight(1);
-		text("drag me",this.x+8,this.y+25)
 	}
 
 	this.clickCheck = function(){

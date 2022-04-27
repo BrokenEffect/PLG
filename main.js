@@ -9,7 +9,7 @@ const ENEMY = 'e';
 const MOVE_FUNCTIONS = [moveup,movedown,moveleft,moveright]; //just keepign track of names here
 
 //resolution stuffs
-var scl = 36; //size of each square in the grid (in pixels)
+var scl = 30; //size of each square in the grid (in pixels)
 var cWidth = 1600;
 var cHeight = 900;
 
