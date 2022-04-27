@@ -1,4 +1,6 @@
 //-----------------------------------------------
+// just an example class for draggable block
+//
 function block(x,y) {
 	//member variables
 	this.x = x;

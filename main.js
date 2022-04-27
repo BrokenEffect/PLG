@@ -6,7 +6,6 @@ const PLAYER = 'p';
 const GOAL = 'g';
 const COIN = 'c';
 const ENEMY = 'e';
-const MOVE_FUNCTIONS = [moveup,movedown,moveleft,moveright]; //just keepign track of names here
 
 //resolution stuffs
 var scl = 30; //size of each square in the grid (in pixels)
@@ -24,10 +23,9 @@ var coin_goal; //goal for how many coins we need to collect, use -1 if not appli
 var allowed_move_blocks;
 var allowed_if_blocks;
 var allowed_loop_blocks;
+
 //var commands = [ifcommand.bind(null,"ENEMY_ABOVE",[moveleft],[moveup])];
 var commands = [moveleft,moveleft,movedown,loopcommand.bind(null,4,[moveright]),moveup];
-var RUNNING = false;
-var CURRENT_COMMAND_NUM = 0;
 
 
 //allocates a 50x50 grid, only the tiles being used will be displayed
@@ -82,7 +80,6 @@ function start_level(level_name){
 		tiles[9][j] = WALL;
 	}
 
-	update_grid(); //starts the gameplay loop for this level
 }
 
 
@@ -201,6 +198,7 @@ function keyPressed() {
 	}
 }
 
+// drag and drop example
 function mousePressed() {
 	b.clickCheck();
 }
