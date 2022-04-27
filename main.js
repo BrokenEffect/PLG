@@ -24,6 +24,8 @@ var allowed_move_blocks;
 var allowed_if_blocks;
 var allowed_loop_blocks;
 
+var input1_text;
+
 //var commands = [ifcommand.bind(null,"ENEMY_ABOVE",[moveleft],[moveup])];
 //var commands = [loopcommand.bind(null,6,[ifcommand.bind(null,"ENEMY_ABOVE",[moveleft],[moveup])])]
 //var commands = [ifcommand("ENEMY_ABOVE",moveleft,moveup)];
@@ -46,6 +48,24 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 	canvas.parent('canvas-holder');
 	b = new block(10,10);
 
+
+	//Button examples
+	button1 = createButton('click me');
+  	button1.position(10, 700);
+  	button1.mousePressed(button1Pressed);
+  	//
+  	input1 = createInput("type here",type="text");
+  	input1_text = "type here";
+	input1.size(80);
+	input1.input(input1Changed); //text is stored in the global variable: input1_text
+	input1.position(10,750)
+	//
+	button2 = createButton('<- print that');
+  	button2.position(100, 750);
+  	button2.mousePressed(button2Pressed);
+
+
+  	//
 	colorMode(HSB, 360, 100, 100); //changes color mode to HSB (aka HSL)
 	start_level("test-level.txt");
 }
@@ -209,6 +229,17 @@ function mousePressed() {
 
 function mouseReleased() {
 	b.release();
+}
+
+
+function button1Pressed() {
+  console.log("You clicked me!");
+}
+function input1Changed() {
+	input1_text = this.value();
+}
+function button2Pressed() {
+  console.log(input1_text);
 }
 
 
