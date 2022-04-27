@@ -8,7 +8,7 @@ const COIN = 'c';
 const ENEMY = 'e';
 
 //resolution stuffs
-var scl = 30; //size of each square in the grid (in pixels)
+var scl = 30; //scale, how many pixels per square
 var cWidth = 1600;
 var cHeight = 900;
 
@@ -25,7 +25,9 @@ var allowed_if_blocks;
 var allowed_loop_blocks;
 
 //var commands = [ifcommand.bind(null,"ENEMY_ABOVE",[moveleft],[moveup])];
-var commands = [moveleft,moveleft,movedown,loopcommand.bind(null,4,[moveright]),moveup];
+//var commands = [loopcommand.bind(null,6,[ifcommand.bind(null,"ENEMY_ABOVE",[moveleft],[moveup])])]
+//var commands = [ifcommand("ENEMY_ABOVE",moveleft,moveup)];
+var commands = [loopcommand.bind(null,4,[moveright]),moveup];
 
 
 //allocates a 50x50 grid, only the tiles being used will be displayed
@@ -54,7 +56,6 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 //			   begin setting up that level, then start the game
 
 
-
 function start_level(level_name){
 
 	//TODO: Actually import from our .txt instead of hard-coding like I did below
@@ -63,8 +64,9 @@ function start_level(level_name){
 	coin_goal = 5;
 	allowed_move_blocks = 5;
 
-	p = new player(4,6); //creates the player at 4,5
+	p = new player(3,5); //creates the player at 4,5
 
+	tiles[5][5] = COIN;
 	//adds some game objects
 	tiles[4][2] = ENEMY;
 	tiles[6][6] = GOAL;
@@ -96,7 +98,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			if (tiles[i][j] == SPACE){
 				fill(0, 0, 21); //these fill() commands are just color values
 			} else if (tiles[i][j] == WALL){
-				fill(0,0,90);
+				fill(0,0,100);
 				/*
 			} else if (tiles[i][j] == PLAYER){
 				fill(145,70,90);
@@ -112,8 +114,9 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			if(i==p.x && j == p.y){ //filling in players spot
 				fill(145,70,90);
 			}
-			stroke(0,0,90);
+			stroke(0,0,100);
 			rect(cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2),scl,scl);
+			//rect(i*scl,j*scl,scl,scl);
 		}
 		
 	}
@@ -141,6 +144,7 @@ function update_grid() { //this is essentially the game loop, its kind of turn-b
 		//TODO:  maybe display a "Level Complete" message and then return to level selection screen or next level
 	}
 	if (tiles[p.x][p.y] == ENEMY){ //this will probably be moved somewhere else when enemy AI (if any) is implemented
+
 		p.dead = true;
 		console.log("You Died!");
 		start_level("test-level.txt"); //restarts the level
@@ -205,4 +209,62 @@ function mousePressed() {
 
 function mouseReleased() {
 	b.release();
+}
+
+
+
+// COMMANDS LIST
+
+function moveup(){
+	if(tiles[p.x][p.y-1] != WALL){
+		p.moveup();
+	}
+	
+}
+function movedown(){
+	if(tiles[p.x][p.y+1] != WALL){
+		p.movedown();
+	}
+}
+function moveleft(){
+	if(tiles[p.x-1][p.y] != WALL){
+		p.moveleft();
+	}
+	
+}
+function moveright(){
+	if(tiles[p.x+1][p.y] != WALL){
+		p.moveright();
+	}
+}
+
+//loops is the number of iterations
+//command_list is the list of instructions we perform each loop iteration
+function loopcommand(loops,command_list){
+	for(var i=0; i<loops;i++){
+		for(var j=0; j<command_list.length;j++){
+			command_list[j]();
+			update_grid();
+
+		}
+	}
+	
+}
+//condition is a string to represent the condition, currently we are only checking for adjacent enemies
+//command_list is the list of instructions to execute if the condition is TRUE
+//command_list_else is the list of instructions to execute if the condition is FALSE
+function ifcommand(condition,command_list,command_list_else){
+	if(condition == "ENEMY_ABOVE"){
+		if(tiles[p.x][p.y-1] == ENEMY){
+			for(var j=0; j<command_list.length;j++){
+				command_list[j]();
+				update_grid();
+			}
+		} else {
+			for(var j=0; j<command_list_else.length;j++){
+				command_list_else[j]();
+				update_grid();
+			}
+		}
+	}
 }
