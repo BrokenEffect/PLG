@@ -41,12 +41,50 @@ for (var i = 0; i < MAX_SIZE; i++) {
 	}
 }
 
+//List of levels
+const levels = [];
+var lvl_index = 0;
+
+//---------------- PRELOAD FUNCTION -------------------
+//NOTE: lvl-config.txt loads list of levels in order from top to bottom. To add a level, place the txt file name in the desired position in lvl-config.txt. Then place the txt file in the levels directory.
+let lvlConfig_data;
+var lvlName;
+const lvl_data = [];
+function preload() {
+	lvlConfig_data = loadStrings('levels/lvl-config.txt');
+	for (var i = 0; i < lvlConfig_data.length; i++){
+		lvl_data.push(loadStrings("levels/" + lvlConfig_data[i]));
+	}
+}
+
+//---------------- SETUP LEVELS -------------------
+function lvl_setup(){
+	for (var i = 0; i < lvlConfig_data.length; i++){
+		levels.push(lvlConfig_data[i]);
+	}
+	for (var i = 0; i < lvlConfig_data.length; i++){
+		lvlName = "levels/" + lvlConfig_data[i];
+		loadStrings(lvlName, addLvl);	
+	}
+	console.log("Current Levels: " + levels);
+}
+
+function addLvl(result) {
+	lvl_data.push(result);
+	if (lvl_data.length == lvlConfig_data.length){
+		start_level(lvl_index);
+	}
+}
+
 
 //---------------- SETUP FUNCTION -----------------
 function setup() { //this gets called once at the start, as soon as the webpage is done loading
 	canvas = createCanvas(cWidth, cHeight);
 	canvas.parent('canvas-holder');
 	b = new block(10,10);
+
+	//Perform level setup
+	lvl_setup();
 
 
 	//Button examples
@@ -67,7 +105,6 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 
   	//
 	colorMode(HSB, 360, 100, 100); //changes color mode to HSB (aka HSL)
-	start_level("test-level.txt");
 }
 
 
@@ -76,35 +113,51 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 //			   begin setting up that level, then start the game
 
 
-function start_level(level_name){
+function start_level(lIndex){
 
-	//TODO: Actually import from our .txt instead of hard-coding like I did below
-	curr_Width = 10;
-	curr_Height = 10;
-	coin_goal = 5;
-	allowed_move_blocks = 5;
+	curr_Width = lvl_data[lIndex][0].length;
+	curr_Height = lvl_data[lIndex].length - 6;
+	coin_goal = lvl_data[lIndex].join(",").match(/c/g).length;
+	tmp_data_str = lvl_data[lIndex].join(",").replaceAll(",","");
+	const coin_pos = [...tmp_data_str.matchAll("c")];
+	const enemy_pos = [...tmp_data_str.matchAll("e")];
+	const goal_pos = [...tmp_data_str.matchAll("g")];
+	const wall_pos = [...tmp_data_str.matchAll("#")];
 
-	p = new player(3,5); //creates the player at 4,5
+	set_pos(coin_pos, COIN);
+	set_pos(enemy_pos, ENEMY);
+	set_pos(goal_pos, GOAL);
+	allowed_move_blocks = lvl_data[lIndex][curr_Height + 2];
 
-	tiles[5][5] = COIN;
-	//adds some game objects
-	tiles[4][2] = ENEMY;
-	tiles[6][6] = GOAL;
-	tiles[2][7] = COIN;
+	//Set player position
+	var player_pos = tmp_data_str.indexOf("p");
+	var tmp_row = Math.floor(player_pos / curr_Width);
+	var tmp_val = tmp_row * curr_Width;
+	var tmp_col = player_pos - tmp_val;
+	p = new player(tmp_col, tmp_row);
 
-	//makes walls
+	//makes walls --Should the walls automatically surround the level?
 	for(var i = 0; i<curr_Width;i++){
 		tiles[i][0] = WALL;
-		tiles[i][9] = WALL;
+		tiles[i][curr_Height - 1] = WALL;
 	}
 	for(var j = 0; j<curr_Height;j++){
 		tiles[0][j] = WALL;
-		tiles[9][j] = WALL;
+		tiles[curr_Width - 1][j] = WALL;
 	}
+	set_pos(wall_pos, WALL);
 
 }
 
-
+function set_pos(data_pos, symbol){ //Finds coords based off index and sets the symbol to the coords in tiles
+	for (var k = 0; k < data_pos.length; k++){
+		var ind = data_pos[k].index;
+		var row = Math.floor(ind / curr_Width);
+		var tmp_val = row * curr_Width;
+		var col = ind - tmp_val;
+		tiles[col][row] = symbol;
+	}	
+}
 
 //---------------- DRAW -------------------
 function draw () { // this function runs over and over at 60fps (or whatever we set our framerate to)
@@ -162,12 +215,20 @@ function update_grid() { //this is essentially the game loop, its kind of turn-b
 		p.goal_reached = true;
 		console.log("Goal Reached!");
 		//TODO:  maybe display a "Level Complete" message and then return to level selection screen or next level
+		console.log("Moving to next level...")
+		lvl_index += 1;
+		if (lvl_index >= levels.length){
+			console.log("Game Over (out of levels)"); //Add functionality for game over
+		}
+		else {
+			start_level(lvl_index);
+		}
 	}
 	if (tiles[p.x][p.y] == ENEMY){ //this will probably be moved somewhere else when enemy AI (if any) is implemented
 
 		p.dead = true;
 		console.log("You Died!");
-		start_level("test-level.txt"); //restarts the level
+		start_level(lvl_index); //restarts the level
 	}
 	
 	
