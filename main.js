@@ -29,8 +29,23 @@ var input1_text;
 //var commands = [ifcommand.bind(null,"ENEMY_ABOVE",[moveleft],[moveup])];
 //var commands = [loopcommand.bind(null,6,[ifcommand.bind(null,"ENEMY_ABOVE",[moveleft],[moveup])])]
 //var commands = [ifcommand("ENEMY_ABOVE",moveleft,moveup)];
-var commands = [loopcommand.bind(null,4,[moveright]),moveup];
+//var commands = [loopcommand.bind(null,4,[moveright]),moveup];
+var commands = [];
+	//These Two variables are used to render the text for the command list.
+var commands_text = '';
+var commands_list_text = [];
 
+	//Variables Used to Keep Track of Adding Loop to Commands List
+var loop_status = false;
+var loop_status_text = '';
+var loop_add = [];
+var loop_add_text = '';
+var loop_add_temp = '';
+var loop_add_list_text = [];
+var loop_num = 1;
+var loop_num_text = '';
+var loop_num_min = 1;
+var loop_num_max = 10;  //I arbitrarily chose 10, it can be changed to more later.
 
 //allocates a 50x50 grid, only the tiles being used will be displayed
 var tiles = [];
@@ -64,7 +79,7 @@ function lvl_setup(){
 	}
 	for (var i = 0; i < lvlConfig_data.length; i++){
 		lvlName = "levels/" + lvlConfig_data[i];
-		loadStrings(lvlName, addLvl);	
+		loadStrings(lvlName, addLvl);
 	}
 	console.log("Current Levels: " + levels);
 }
@@ -81,10 +96,10 @@ function addLvl(result) {
 function setup() { //this gets called once at the start, as soon as the webpage is done loading
 	canvas = createCanvas(cWidth, cHeight);
 	canvas.parent('canvas-holder');
-	b = new block(10,10);
+	//b = new block(10,10);
 
 	//Perform level setup
-	lvl_setup();
+	//lvl_setup();
 
 
 	//Button examples
@@ -102,6 +117,43 @@ function setup() { //this gets called once at the start, as soon as the webpage 
   	button2.position(100, 750);
   	button2.mousePressed(button2Pressed);
 
+				/* ### Buttons to Add Commands ### */
+		//MoveUpButton
+		moveUpButton = createButton('Add Move Up');
+		moveUpButton.position(200, 300);
+		moveUpButton.mousePressed(moveUpButtonPressed);
+		//MoveDownButton
+		moveDownButton = createButton('Add Move Down');
+		moveDownButton.position(200, 325);
+		moveDownButton.mousePressed(moveDownButtonPressed);
+		//MoveLeftButton
+		moveLeftButton = createButton('Add Move Left');
+		moveLeftButton.position(200, 350);
+		moveLeftButton.mousePressed(moveLeftButtonPressed);
+		//MoveRightButton
+		moveRightButton = createButton('Add Move Right');
+		moveRightButton.position(200, 375);
+		moveRightButton.mousePressed(moveRightButtonPressed);
+		//RemoveLastCommandButton
+		removeCommandButton = createButton('Remove Last Command');
+		removeCommandButton.position(200, 400);
+		removeCommandButton.mousePressed(removeCommandPressed);
+		//BeginForLoopButton
+		beginForLoopButton = createButton('Begin For Loop');
+		beginForLoopButton.position(200, 425);
+		beginForLoopButton.mousePressed(beginForLoopPressed);
+		//EndForLoopButton
+		endForLoopButton = createButton('Close For Loop');
+		endForLoopButton.position(200, 450);
+		endForLoopButton.mousePressed(endForLoopPressed);
+		//IncrementLoopNumButton
+		incLoopNumButton = createButton('Add Loop Iteration');
+		incLoopNumButton.position(200, 475);
+		incLoopNumButton.mousePressed(incLoopNumPressed);
+		//DecrementLoopNumButton
+		decLoopNumButton = createButton('Remove Loop Iteration');
+		decLoopNumButton.position(200, 500);
+		decLoopNumButton.mousePressed(decLoopNumPressed);
 
   	//
 	colorMode(HSB, 360, 100, 100); //changes color mode to HSB (aka HSL)
@@ -156,13 +208,13 @@ function set_pos(data_pos, symbol){ //Finds coords based off index and sets the 
 		var tmp_val = row * curr_Width;
 		var col = ind - tmp_val;
 		tiles[col][row] = symbol;
-	}	
+	}
 }
 
 //---------------- DRAW -------------------
 function draw () { // this function runs over and over at 60fps (or whatever we set our framerate to)
-	
-	background(0, 0, 21); //background color 
+
+	background(0, 0, 21); //background color
 	b.update();
 
 	for (var i = 0; i < curr_Width; i++){
@@ -187,18 +239,67 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			if(i==p.x && j == p.y){ //filling in players spot
 				fill(145,70,90);
 			}
-			stroke(0,0,100);
+			//stroke(0,0,100);  //White Stroke
+			//stroke('#FF8F00');  //Test Color - Should be Orange
+			stroke('#000000');  //Black Stroke
 			rect(cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2),scl,scl);
 			//rect(i*scl,j*scl,scl,scl);
 		}
-		
 	}
+
+	/* ###  Text Elements  ### */
+		//Draw Text for Commands Added to Command List
+	commands_text = 'Commands Added: ';
+	if (commands_list_text.length != 0) {
+		for(var k = 0; k < commands_list_text.length; k++) {
+			commands_text = commands_text + commands_list_text[k];  //Adding Command Text to List
+			if (k != (commands_list_text.length - 1)) {
+				commands_text = commands_text + ', '
+			}
+		}
+	} else {
+		commands_text = commands_text + 'None'
+	}
+	stroke('#000000');  //Black Stroke - HTML Color Code #000000
+	textSize(16);
+	text(commands_text, 100, 750);
+		//Draw Text for Loop Status
+	loop_status_text = 'Loop Status: ';
+	if (loop_status == false) {
+		loop_status_text = loop_status_text + 'Closed';
+	} else {
+		loop_status_text = loop_status_text + 'Open';
+	}
+	textSize(16);
+	text(loop_status_text, 100, 775);
+		//Only Draw Loop Command and Loop Num Text if Loop Open
+	if (loop_status == true) {
+			//Draw Text for Loop Commands
+		loop_add_text = 'Loop Commands Added: ';
+		if (loop_add_list_text.length != 0) {
+			for (var m = 0; m < loop_add_list_text.length; m++) {
+				loop_add_text = loop_add_text + loop_add_list_text[m];
+				if (m != (loop_add_list_text.length - 1)) {
+					loop_add_text = loop_add_text + ', ';
+				}
+			}
+		} else {
+			loop_add_text = loop_add_text + 'None';
+		}
+		textSize(16);
+		text(loop_add_text, 100, 800);
+			//Draw Text for Loop Num
+		loop_num_text = 'Number of Loop Iterations: ' + loop_num;
+		textSize(16);
+		text(loop_num_text, 100, 825);
+	}
+
 }
 
 
 
 //---------------- UPDATE GRID -------------------
-function update_grid() { //this is essentially the game loop, its kind of turn-based, 
+function update_grid() { //this is essentially the game loop, its kind of turn-based,
 												 // getting called after each action like the player moving
 
 	//do some turn-based operations, like checking if the player is ontop of a coin now, etc.
@@ -230,8 +331,8 @@ function update_grid() { //this is essentially the game loop, its kind of turn-b
 		console.log("You Died!");
 		start_level(lvl_index); //restarts the level
 	}
-	
-	
+
+
 }
 
 //------------ RUN COMMANDS ---------------------
@@ -241,7 +342,7 @@ async function run_commands() {
 			commands[i]();
 			update_grid();
 			await sleep(400);
-		
+
 	}
 	if (p.goal_reached || p.coin_goal_reached){
 		console.log("Algorithm successful!");
@@ -252,8 +353,8 @@ async function run_commands() {
 //-----------------------------------------------
 
 // you don't need to know why this works
-const sleep = (millis) => { 
-    return new Promise(resolve => setTimeout(resolve, millis)) 
+const sleep = (millis) => {
+    return new Promise(resolve => setTimeout(resolve, millis))
 }
 
 
@@ -276,7 +377,7 @@ function keyPressed() {
 		update_grid();
 	}
 	allowed_move_blocks -= 1;
-	
+
 	if(key== ' '){
 		console.log("SPACE!");
 		run_commands();
@@ -284,6 +385,7 @@ function keyPressed() {
 }
 
 // drag and drop example
+/*
 function mousePressed() {
 	b.clickCheck();
 }
@@ -291,7 +393,7 @@ function mousePressed() {
 function mouseReleased() {
 	b.release();
 }
-
+*/
 
 function button1Pressed() {
   console.log("You clicked me!");
@@ -303,6 +405,142 @@ function button2Pressed() {
   console.log(input1_text);
 }
 
+/* ### Functions For Adding Commands ### */
+		//AddMoveUp - For Add Move Up Button
+function moveUpButtonPressed() {
+	if (loop_status == false) {
+		console.log('Adding Move Up to Commands List...');
+		commands.push(moveup);
+		commands_list_text.push("Move Up");
+	} else {
+		console.log('Adding Move Up to Loop Commands List...');
+		loop_add.push(moveup);
+		loop_add_list_text.push("Move Up");
+	}
+}
+		//AddMoveDown - For Add Move Down Button
+function moveDownButtonPressed() {
+	if (loop_status == false) {
+		console.log('Adding Move Down to Commands List...');
+		commands.push(movedown);
+		commands_list_text.push("Move Down");
+	} else {
+		console.log('Adding Move Down to Loop Commands List...');
+		loop_add.push(movedown);
+		loop_add_list_text.push("Move Down");
+	}
+}
+		//AddMoveLeft - For Add Move Left Button
+function moveLeftButtonPressed() {
+	if (loop_status == false) {
+		console.log('Adding Move Left to Commands List...');
+		commands.push(moveleft);
+		commands_list_text.push("Move Left");
+	} else {
+		console.log('Adding Move Left to Loop Commands List...');
+		loop_add.push(moveleft);
+		loop_add_list_text.push("Move Left");
+	}
+}
+		//AddMoveRight - For Add Move Right Button
+function moveRightButtonPressed() {
+	if (loop_status == false) {
+		console.log('Adding Move Right to Commands List...');
+		commands.push(moveright);
+		commands_list_text.push("Move Right");
+	} else {
+		console.log('Adding Move Right to LoopCommands List...');
+		loop_add.push(moveright);
+		loop_add_list_text.push("Move Right");
+	}
+}
+		//RemoveCommandPressed - For Remove Command Button
+function removeCommandPressed() {
+	if (loop_status == false) {
+		if (commands.length > 0) {
+			console.log('Removing Last Command. Last Command Was:');
+			commands.pop();
+			console.log(commands_list_text.pop());
+		} else {
+			console.log('Commands List is Already Empty...');
+		}
+	} else {
+		if (loop_add.length > 0) {
+			console.log('Removing Last Loop Command. Last Loop Command Was:');
+			loop_add.pop();
+			console.log(loop_add_list_text.pop());
+		} else {
+			console.log('Loop Commands List is Already Empty...');
+		}
+	}
+}
+		//BeinForLoopPressed - Used to Open For Loop
+function beginForLoopPressed() {
+	if (loop_status == true) {
+		console.log('Loop is Already Open...');
+	} else {
+		console.log('Opening Loop...');
+		loop_status = true;
+	}
+}
+		//EndForLoopPressed - Used to Close For Loop
+function endForLoopPressed() {
+	if (loop_status == false) {
+		console.log('Loop is Already Closed...');
+	} else {
+		if (loop_add.length == 0) {
+			console.log('No Loop Commands Added. Cancelling Loop Add and Closing Loop...');
+			loop_status = false;
+		} else {
+			console.log('Adding Loop Command to Commands List...');
+			commands.push(loopcommand.bind(null, loop_num, loop_add));
+			loop_add_temp = 'For(' + loop_num + ', [';
+			for (var i = 0; i < loop_add_list_text.length; i++) {
+				loop_add_temp = loop_add_temp + loop_add_list_text[i];
+				if (i != (loop_add_list_text.length - 1)) {
+					loop_add_temp = loop_add_temp + ', ';
+				}
+			}
+			loop_add_temp = loop_add_temp + '])';
+			commands_list_text.push(loop_add_temp);
+			console.log('Resetting Loop Vars...');
+			loop_num = 1;
+			loop_add_temp = '';
+			loop_add = [];
+			loop_add_list_text = [];
+			console.log('Closing Loop...');
+			loop_status = false;
+		}
+	}
+}
+		//IncLoopNumPressed - Used to Increment the Number of Loop Iterations
+function incLoopNumPressed() {
+	if (loop_status == false) {
+		console.log('Loop is Closed...');
+	} else {
+		loop_num += 1;
+		if (loop_num > loop_num_max) {
+			loop_num = loop_num_max;
+			console.log('Over Max Number of Loop Iterations. Setting to Max...');
+		} else {
+			console.log('Incrementing Loop Num...');
+		}
+	}
+}
+		//DecLoopNumPressed - Used to Increment the Number of Loop Iterations
+function decLoopNumPressed() {
+	if (loop_status == false) {
+		console.log('Loop is Closed...');
+	} else {
+		loop_num -= 1;
+		if (loop_num < loop_num_min) {
+			loop_num = loop_num_min;
+			console.log('Under Min Number of Loop Iterations. Setting to Min...');
+		} else {
+			console.log('Decrementing Loop Num...');
+		}
+	}
+}
 
 
 // COMMANDS LIST
@@ -311,7 +549,7 @@ function moveup(){
 	if(tiles[p.x][p.y-1] != WALL){
 		p.moveup();
 	}
-	
+
 }
 function movedown(){
 	if(tiles[p.x][p.y+1] != WALL){
@@ -322,7 +560,7 @@ function moveleft(){
 	if(tiles[p.x-1][p.y] != WALL){
 		p.moveleft();
 	}
-	
+
 }
 function moveright(){
 	if(tiles[p.x+1][p.y] != WALL){
@@ -340,7 +578,7 @@ function loopcommand(loops,command_list){
 
 		}
 	}
-	
+
 }
 //condition is a string to represent the condition, currently we are only checking for adjacent enemies
 //command_list is the list of instructions to execute if the condition is TRUE
