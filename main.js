@@ -256,7 +256,6 @@ function set_pos(data_pos, symbol){ //Finds coords based off index and sets the 
 function draw () { // this function runs over and over at 60fps (or whatever we set our framerate to)
 
 	background(0, 0, 21); //background color
-	b.update();
 
 	for (var i = 0; i < curr_Width; i++){
 		for (var j=0; j<curr_Height;j++){
