@@ -45,7 +45,26 @@ var loop_add_list_text = [];
 var loop_num = 1;
 var loop_num_text = '';
 var loop_num_min = 1;
-var loop_num_max = 10;  //I arbitrarily chose 10, it can be changed to more later.
+var loop_num_max = 10;  //I arbitrarily chose 10, it can be adjusted later.
+
+//Variables Used to Keep Track of Adding Loop to Commands List
+var if_status = 0;
+var if_status_text = '';
+var if_temp = '';
+var if_true = [];
+var if_true_text = '';
+var if_true_list_text = [];
+var if_else = [];
+var if_else_text = '';
+var if_else_list_text = [];
+var if_cond_list = ['ENEMY_ABOVE', 'ENEMY_BELOW'];
+var if_cond_list_text = ['Enemy Above', 'Enemy Below'];
+var if_cond_num = 0;
+var if_cond_text = '';
+
+//For / If Priority - Variable Used to Keep Track of which list move commands should be added
+	//if both for and if are open.
+var for_if_priority = 0;  // 0 - None, 1 - For, 2 - If
 
 //allocates a 50x50 grid, only the tiles being used will be displayed
 var tiles = [];
@@ -101,23 +120,25 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 	//Perform level setup
 	lvl_setup();
 
+			/*
+		//Button examples
+		button1 = createButton('click me');
+		button1.position(10, 100);
+		button1.mousePressed(button1Pressed);
+		//
+		input1 = createInput("type here",type="text");
+		input1_text = "type here";
+		input1.size(80);
+		input1.input(input1Changed); //text is stored in the global variable: input1_text
+		input1.position(10,150)
+		//
+		button2 = createButton('<- print that');
+		button2.position(100, 150);
+		button2.mousePressed(button2Pressed);
+			*/
 
-	//Button examples
-	button1 = createButton('click me');
-  	button1.position(10, 700);
-  	button1.mousePressed(button1Pressed);
-  	//
-  	input1 = createInput("type here",type="text");
-  	input1_text = "type here";
-	input1.size(80);
-	input1.input(input1Changed); //text is stored in the global variable: input1_text
-	input1.position(10,750)
-	//
-	button2 = createButton('<- print that');
-  	button2.position(100, 750);
-  	button2.mousePressed(button2Pressed);
-
-				/* ### Buttons to Add Commands ### */
+		/* ### Buttons to Add Commands ### */
+				/* MovementCommands */
 		//MoveUpButton
 		moveUpButton = createButton('Add Move Up');
 		moveUpButton.position(200, 300);
@@ -134,26 +155,46 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 		moveRightButton = createButton('Add Move Right');
 		moveRightButton.position(200, 375);
 		moveRightButton.mousePressed(moveRightButtonPressed);
-		//RemoveLastCommandButton
-		removeCommandButton = createButton('Remove Last Command');
-		removeCommandButton.position(200, 400);
-		removeCommandButton.mousePressed(removeCommandPressed);
+				/* Loop Commands */
 		//BeginForLoopButton
 		beginForLoopButton = createButton('Begin For Loop');
-		beginForLoopButton.position(200, 425);
+		beginForLoopButton.position(200, 400);
 		beginForLoopButton.mousePressed(beginForLoopPressed);
 		//EndForLoopButton
 		endForLoopButton = createButton('Close For Loop');
-		endForLoopButton.position(200, 450);
+		endForLoopButton.position(200, 425);
 		endForLoopButton.mousePressed(endForLoopPressed);
 		//IncrementLoopNumButton
 		incLoopNumButton = createButton('Add Loop Iteration');
-		incLoopNumButton.position(200, 475);
+		incLoopNumButton.position(200, 450);
 		incLoopNumButton.mousePressed(incLoopNumPressed);
 		//DecrementLoopNumButton
 		decLoopNumButton = createButton('Remove Loop Iteration');
-		decLoopNumButton.position(200, 500);
+		decLoopNumButton.position(200, 475);
 		decLoopNumButton.mousePressed(decLoopNumPressed);
+				/* If Commands */
+		//BeginIfButton
+		beginIfButton = createButton('Begin If Statement');
+		beginIfButton.position(200, 500);
+		beginIfButton.mousePressed(beginIfPressed);
+		//EndIfButton
+		endIfButton = createButton('Continue / Close If Statement');
+		endIfButton.position(200, 525);
+		endIfButton.mousePressed(endIfPressed);
+		//IncIfCondButton
+		incIfCondButton = createButton('Change If Condition (Increment)');
+		incIfCondButton.position(200, 550);
+		incIfCondButton.mousePressed(incIfCondPressed);
+		//DecIfCondButton
+		decIfCondButton = createButton('Change If Condition (Decrement)');
+		decIfCondButton.position(200, 575);
+		decIfCondButton.mousePressed(decIfCondPressed);
+
+			/*Remove Last Command */
+		//RemoveLastCommandButton
+		removeCommandButton = createButton('Remove Last Command');
+		removeCommandButton.position(200, 600);
+		removeCommandButton.mousePressed(removeCommandPressed);
 
   	//
 	colorMode(HSB, 360, 100, 100); //changes color mode to HSB (aka HSL)
@@ -262,7 +303,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 	}
 	stroke('#000000');  //Black Stroke - HTML Color Code #000000
 	textSize(16);
-	text(commands_text, 100, 750);
+	text(commands_text, 50, 700);
 		//Draw Text for Loop Status
 	loop_status_text = 'Loop Status: ';
 	if (loop_status == false) {
@@ -271,7 +312,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		loop_status_text = loop_status_text + 'Open';
 	}
 	textSize(16);
-	text(loop_status_text, 100, 775);
+	text(loop_status_text, 50, 725);
 		//Only Draw Loop Command and Loop Num Text if Loop Open
 	if (loop_status == true) {
 			//Draw Text for Loop Commands
@@ -287,11 +328,57 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			loop_add_text = loop_add_text + 'None';
 		}
 		textSize(16);
-		text(loop_add_text, 100, 800);
+		text(loop_add_text, 50, 750);
 			//Draw Text for Loop Num
 		loop_num_text = 'Number of Loop Iterations: ' + loop_num;
 		textSize(16);
-		text(loop_num_text, 100, 825);
+		text(loop_num_text, 50, 775);
+	}
+		//Only Draw If Texts if if is Open
+	if (if_status == 0) {
+		if_status_text = 'If Status: Closed';
+	} else if (if_status == 1) {
+		if_status_text = 'If Status: Open. Adding Commands for True';
+	} else if (if_status == 2) {
+		if_status_text = 'If Status: Open. Adding Commands for False';
+	}
+	textSize(16);
+	text(if_status_text, 50, 800);
+	if ((if_status == 1)||(if_status == 2)) {
+		if_true_text = 'If (True) Commands Added: ';
+		if (if_true_list_text.length != 0) {
+			for (var m = 0; m < if_true_list_text.length; m++) {
+				if_true_text = if_true_text + if_true_list_text[m];
+				if (m != (if_true_list_text.length - 1)) {
+					if_true_text = if_true_text + ', ';
+				}
+			}
+		} else {
+			if_true_text = if_true_text + 'None';
+		}
+		textSize(16);
+		text(if_true_text, 50, 825);
+	}
+	if ((if_status == 2)||(if_status == 1)) {
+		if_else_text = 'If (False) Commands Added: ';
+		if (if_else_list_text.length != 0) {
+			for (var m = 0; m < if_else_list_text.length; m++) {
+				if_else_text = if_else_text + if_else_list_text[m];
+				if (m != (if_else_list_text.length - 1)) {
+					if_else_text = if_else_text + ', ';
+				}
+			}
+		} else {
+			if_else_text = if_else_text + 'None';
+		}
+		textSize(16);
+		text(if_else_text, 50, 850);
+	}
+	if ((if_status == 1)||(if_status == 2)) {
+		if_cond_text = 'If Condition: ';
+		if_cond_text = if_cond_text + if_cond_list_text[if_cond_num];  //Can make this look nicer later.
+		textSize(16);
+		text(if_cond_text, 50, 875);
 	}
 
 }
@@ -395,6 +482,8 @@ function mouseReleased() {
 }
 */
 
+//Button and Input Examples
+		/*
 function button1Pressed() {
   console.log("You clicked me!");
 }
@@ -404,73 +493,224 @@ function input1Changed() {
 function button2Pressed() {
   console.log(input1_text);
 }
+	*/
 
 /* ### Functions For Adding Commands ### */
 		//AddMoveUp - For Add Move Up Button
 function moveUpButtonPressed() {
-	if (loop_status == false) {
-		console.log('Adding Move Up to Commands List...');
-		commands.push(moveup);
-		commands_list_text.push("Move Up");
-	} else {
+	if ((loop_status == true) && (if_status != 0)) {
+		if (for_if_priority == 1) {
+			console.log('Adding Move Up to Loop Commands List...');
+			loop_add.push(moveup);
+			loop_add_list_text.push("Move Up");
+		} else if (for_if_priority == 2) {
+			if (if_status == 1) {
+				console.log('Adding Move Up to If True List...');
+				if_true.push(moveup);
+				if_true_list_text.push("Move Up");
+			} else {
+				console.log('Adding Move Up to If False List...');
+				if_else.push(moveup);
+				if_else_list_text.push("Move Up");
+			}
+		} else {
+			console.log('ERROR. PRIORITY NOT GIVEN...');
+		}
+	} else if (loop_status == true) {
 		console.log('Adding Move Up to Loop Commands List...');
 		loop_add.push(moveup);
 		loop_add_list_text.push("Move Up");
+	} else if (if_status == 1) {
+		console.log('Adding Move Up to If True List...');
+		if_true.push(moveup);
+		if_true_list_text.push("Move Up");
+	} else if (if_status == 2) {
+		console.log('Adding Move Up to If False List...');
+		if_else.push(moveup);
+		if_else_list_text.push("Move Up");
+	} else {
+		console.log('Adding Move Up to Commands List...');
+		commands.push(moveup);
+		commands_list_text.push("Move Up");
 	}
 }
 		//AddMoveDown - For Add Move Down Button
 function moveDownButtonPressed() {
-	if (loop_status == false) {
-		console.log('Adding Move Down to Commands List...');
-		commands.push(movedown);
-		commands_list_text.push("Move Down");
-	} else {
+	if ((loop_status == true) && (if_status != 0)) {
+		if (for_if_priority == 1) {
+			console.log('Adding Move Down to Loop Commands List...');
+			loop_add.push(movedown);
+			loop_add_list_text.push("Move Down");
+		} else if (for_if_priority == 2) {
+			if (if_status == 1) {
+				console.log('Adding Move Down to If True List...');
+				if_true.push(movedown);
+				if_true_list_text.push("Move Down");
+			} else {
+				console.log('Adding Move Down to If False List...');
+				if_else.push(movedown);
+				if_else_list_text.push("Move Down");
+			}
+		} else {
+			console.log('ERROR. PRIORITY NOT GIVEN...');
+		}
+	} else if (loop_status == true) {
 		console.log('Adding Move Down to Loop Commands List...');
 		loop_add.push(movedown);
 		loop_add_list_text.push("Move Down");
+	} else if (if_status == 1) {
+		console.log('Adding Move Down to If True List...');
+		if_true.push(movedown);
+		if_true_list_text.push("Move Down");
+	} else if (if_status == 2) {
+		console.log('Adding Move Down to If False List...');
+		if_else.push(movedown);
+		if_else_list_text.push("Move Down");
+	} else {
+		console.log('Adding Move Down to Commands List...');
+		commands.push(movedown);
+		commands_list_text.push("Move Down");
 	}
 }
 		//AddMoveLeft - For Add Move Left Button
 function moveLeftButtonPressed() {
-	if (loop_status == false) {
-		console.log('Adding Move Left to Commands List...');
-		commands.push(moveleft);
-		commands_list_text.push("Move Left");
-	} else {
+	if ((loop_status == true) && (if_status != 0)) {
+		if (for_if_priority == 1) {
+			console.log('Adding Move Left to Loop Commands List...');
+			loop_add.push(moveleft);
+			loop_add_list_text.push("Move Left");
+		} else if (for_if_priority == 2) {
+			if (if_status == 1) {
+				console.log('Adding Move Left to If True List...');
+				if_true.push(moveleft);
+				if_true_list_text.push("Move Left");
+			} else {
+				console.log('Adding Move Left to If False List...');
+				if_else.push(moveleft);
+				if_else_list_text.push("Move Left");
+			}
+		} else {
+			console.log('ERROR. PRIORITY NOT GIVEN...');
+		}
+	} else if (loop_status == true) {
 		console.log('Adding Move Left to Loop Commands List...');
 		loop_add.push(moveleft);
 		loop_add_list_text.push("Move Left");
+	} else if (if_status == 1) {
+		console.log('Adding Move Left to If True List...');
+		if_true.push(moveleft);
+		if_true_list_text.push("Move Left");
+	} else if (if_status == 2) {
+		console.log('Adding Move Left to If False List...');
+		if_else.push(moveleft);
+		if_else_list_text.push("Move Left");
+	} else {
+		console.log('Adding Move Left to Commands List...');
+		commands.push(moveleft);
+		commands_list_text.push("Move Left");
 	}
 }
 		//AddMoveRight - For Add Move Right Button
 function moveRightButtonPressed() {
-	if (loop_status == false) {
+	if ((loop_status == true) && (if_status != 0)) {
+		if (for_if_priority == 1) {
+			console.log('Adding Move Right to Loop Commands List...');
+			loop_add.push(moveright);
+			loop_add_list_text.push("Move Right");
+		} else if (for_if_priority == 2) {
+			if (if_status == 1) {
+				console.log('Adding Move Right to If True List...');
+				if_true.push(moveright);
+				if_true_list_text.push("Move Right");
+			} else {
+				console.log('Adding Move Right to If False List...');
+				if_else.push(moveright);
+				if_else_list_text.push("Move Right");
+			}
+		} else {
+			console.log('ERROR. PRIORITY NOT GIVEN...');
+		}
+	} else if (loop_status == true) {
+		console.log('Adding Move Right to Loop Commands List...');
+		loop_add.push(moveright);
+		loop_add_list_text.push("Move Right");
+	} else if (if_status == 1) {
+		console.log('Adding Move Right to If True List...');
+		if_true.push(moveright);
+		if_true_list_text.push("Move Right");
+	} else if (if_status == 2) {
+		console.log('Adding Move Right to If False List...');
+		if_else.push(moveright);
+		if_else_list_text.push("Move Right");
+	} else {
 		console.log('Adding Move Right to Commands List...');
 		commands.push(moveright);
 		commands_list_text.push("Move Right");
-	} else {
-		console.log('Adding Move Right to LoopCommands List...');
-		loop_add.push(moveright);
-		loop_add_list_text.push("Move Right");
 	}
 }
-		//RemoveCommandPressed - For Remove Command Button
+			//RemoveCommandPressed - For Remove Command Button
 function removeCommandPressed() {
-	if (loop_status == false) {
-		if (commands.length > 0) {
-			console.log('Removing Last Command. Last Command Was:');
-			commands.pop();
-			console.log(commands_list_text.pop());
+	if ((loop_status == true) && (if_status != 0)) {
+		if (for_if_priority == 1) {
+			if (loop_add.length > 0) {
+				console.log('Removing Last Loop Command. Last Loop Command Was:');
+				loop_add.pop();
+				console.log(loop_add_list_text.pop());
+			} else {
+				console.log('Loop Commands List is Already Empty...');
+			}
+		} else if (for_if_priority == 2) {
+			if (if_status == 1) {
+				if (if_true.length > 0) {
+					console.log('Removing Last If True Command. Last Command Was:');
+					if_true.pop();
+					console.log(if_true_list_text.pop());
+				} else {
+					console.log('If True List is Already Empty...');
+				}
+			} else {
+				if (if_else.length > 0) {
+					console.log('Removing Last If False Command. Last Command Was:');
+					if_else.pop();
+					console.log(if_else_list_text.pop());
+				} else {
+					console.log('If False List is Already Empty...');
+				}
+			}
 		} else {
-			console.log('Commands List is Already Empty...');
+			console.log('ERROR. PRIORITY NOT GIVEN...');
 		}
-	} else {
+	} else if (loop_status == true) {
 		if (loop_add.length > 0) {
 			console.log('Removing Last Loop Command. Last Loop Command Was:');
 			loop_add.pop();
 			console.log(loop_add_list_text.pop());
 		} else {
 			console.log('Loop Commands List is Already Empty...');
+		}
+	} else if (if_status == 1) {
+		if (if_true.length > 0) {
+			console.log('Removing Last If True Command. Last Command Was:');
+			if_true.pop();
+			console.log(if_true_list_text.pop());
+		} else {
+			console.log('If True List is Already Empty...');
+		}
+	} else if (if_status == 2) {
+		if (if_else.length > 0) {
+			console.log('Removing Last If False Command. Last Command Was:');
+			if_else.pop();
+			console.log(if_else_list_text.pop());
+		} else {
+			console.log('If False List is Already Empty...');
+		}
+	} else {
+		if (commands.length > 0) {
+			console.log('Removing Last Command. Last Command Was:');
+			commands.pop();
+			console.log(commands_list_text.pop());
+		} else {
+			console.log('Commands List is Already Empty...');
 		}
 	}
 }
@@ -480,6 +720,9 @@ function beginForLoopPressed() {
 		console.log('Loop is Already Open...');
 	} else {
 		console.log('Opening Loop...');
+		if (if_status != 0) {
+			for_if_priority = 1;
+		}
 		loop_status = true;
 	}
 }
@@ -488,12 +731,15 @@ function endForLoopPressed() {
 	if (loop_status == false) {
 		console.log('Loop is Already Closed...');
 	} else {
-		if (loop_add.length == 0) {
+		if (for_if_priority == 2) {
+			console.log('Cannot Close Loop When If Statement is Being Built Inside Loop...');
+		} else if (loop_add.length == 0) {
 			console.log('No Loop Commands Added. Cancelling Loop Add and Closing Loop...');
+			if (for_if_priority == 1) {
+				for_if_priority = 0;
+			}
 			loop_status = false;
 		} else {
-			console.log('Adding Loop Command to Commands List...');
-			commands.push(loopcommand.bind(null, loop_num, loop_add));
 			loop_add_temp = 'For(' + loop_num + ', [';
 			for (var i = 0; i < loop_add_list_text.length; i++) {
 				loop_add_temp = loop_add_temp + loop_add_list_text[i];
@@ -502,7 +748,19 @@ function endForLoopPressed() {
 				}
 			}
 			loop_add_temp = loop_add_temp + '])';
-			commands_list_text.push(loop_add_temp);
+			if (if_status == 1) {
+				console.log('Adding Loop Command to If True Commands List...');
+				if_true.push(loopcommand.bind(null, loop_num, loop_add));
+				if_true_list_text.push(loop_add_temp);
+			} else if (if_status == 2) {
+				console.log('Adding Loop Command to If False List...');
+				if_true.push(loopcommand.bind(null, loop_num, loop_add));
+				if_true_list_text.push(loop_add_temp);
+			} else {
+				console.log('Adding Loop Command to Commands List...');
+				commands.push(loopcommand.bind(null, loop_num, loop_add));
+				commands_list_text.push(loop_add_temp);
+			}
 			console.log('Resetting Loop Vars...');
 			loop_num = 1;
 			loop_add_temp = '';
@@ -510,6 +768,9 @@ function endForLoopPressed() {
 			loop_add_list_text = [];
 			console.log('Closing Loop...');
 			loop_status = false;
+			if (for_if_priority == 1) {
+				for_if_priority = 0;
+			}
 		}
 	}
 }
@@ -541,7 +802,100 @@ function decLoopNumPressed() {
 		}
 	}
 }
-
+		//BeginIfPressed - Used to begin creation of If Statement
+function beginIfPressed() {
+	if (if_status == 0) {
+		console.log('Opening If Statement...');
+		if (loop_status == true) {
+			for_if_priority = 2;
+		}
+		if_status = 1;
+	} else {
+		console.log('If is Already Open...');
+	}
+}
+		//EndIfPressed - Used to Continue If Creation or Close It
+function endIfPressed() {
+	if (if_status == 0) {
+		console.log('If is Already Closed...');
+	} else if (if_status == 1) {
+		if (for_if_priority == 1) {
+			console.log('Cannot Continue If Statement When Loop is Being Built Inside If Statement...');
+		} else if (if_true.length == 0) {
+			console.log('No If Commands Added to True Case. Cancelling If Add and Closing If...');
+			if (for_if_priority == 2) {
+				for_if_priority = 0;
+			}
+			if_status = 0;
+		} else {
+			console.log('Continuing to Else Case...');
+			if_status = 2;
+		}
+	} else {
+		if (for_if_priority == 1) {
+			console.log('Cannot Clost If Statement When Loop is Being Built Inside If Statement...');
+		} else {
+			if_temp = 'If(' + if_cond_list_text[if_cond_num] + ', [';
+			for (var i = 0; i < if_true_list_text.length; i++) {
+				if_temp = if_temp + if_true_list_text[i];
+				if (i != (if_true_list_text.length - 1)) {
+					if_temp = if_temp + ', ';
+				}
+			}
+			if_temp = if_temp + '], [';
+			for (var i = 0; i < if_else_list_text.length; i++) {
+				if_temp = if_temp + if_else_list_text[i];
+				if (i != (if_else_list_text.length - 1)) {
+					if_temp = if_temp + ', ';
+				}
+			}
+			if_temp = if_temp + '])';
+			if (loop_status == true) {
+				console.log('Adding If Command to Loop Commands List...');
+				loop_add.push(ifcommand.bind(null, if_cond_list[if_cond_num], if_true, if_else));
+				loop_add_list_text.push(if_temp);
+			} else {
+				console.log('Adding If Command to Commands List...');
+				commands.push(ifcommand.bind(null, if_cond_list[if_cond_num], if_true, if_else));
+				commands_list_text.push(if_temp);
+			}
+			console.log('Resetting if Vars...');
+			if_temp = '';
+			if_cond_num = 0;
+			if_true = [];
+			if_true_list_text = [];
+			if_else = [];
+			if_else_list_text = [];
+			console.log('Closing If Statement...');
+			if_status = 0;
+			if (for_if_priority == 2) {
+				for_if_priority = 0;
+			}
+		}
+	}
+}
+		//IncIfCondPressed - Used to Increment If Condition List
+function incIfCondPressed() {
+	if ((if_status) == 1 || (if_status == 2)) {
+		if_cond_num += 1;
+		if (if_cond_num >= if_cond_list.length) {
+			if_cond_num = 0;
+		}
+	} else {
+		console.log('If Statement is Closed...');
+	}
+}
+		//DecIFCondPressed - Used to Decrement If Condition List
+function decIfCondPressed() {
+	if ((if_status) == 1 || (if_status == 2)) {
+		if_cond_num -= 1;
+		if (if_cond_num < 0) {
+			if_cond_num = if_cond_list.lenght - 1;
+		}
+	} else {
+		console.log('If Statement is Closed...');
+	}
+}
 
 // COMMANDS LIST
 
