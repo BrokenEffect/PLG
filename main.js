@@ -99,7 +99,7 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 	//b = new block(10,10);
 
 	//Perform level setup
-	//lvl_setup();
+	lvl_setup();
 
 
 	//Button examples
