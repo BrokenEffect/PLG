@@ -212,7 +212,15 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 function start_level(lIndex){
 
 	curr_Width = lvl_data[lIndex][0].length;
-	curr_Height = lvl_data[lIndex].length - 6;
+
+	//Get height based off symbols (assumes walls surround level)
+	curr_Height = 0;
+	for(var i = 0; i < lvl_data[lIndex].length; i++){
+		if (lvl_data[lIndex][i][0] == "#"){
+			curr_Height += 1;
+		}
+	}
+
 	coin_goal = lvl_data[lIndex].join(",").match(/c/g).length;
 	tmp_data_str = lvl_data[lIndex].join(",").replaceAll(",","");
 	const coin_pos = [...tmp_data_str.matchAll("c")];
@@ -232,15 +240,6 @@ function start_level(lIndex){
 	var tmp_col = player_pos - tmp_val;
 	p = new player(tmp_col, tmp_row);
 
-	//makes walls --Should the walls automatically surround the level?
-	for(var i = 0; i<curr_Width;i++){
-		tiles[i][0] = WALL;
-		tiles[i][curr_Height - 1] = WALL;
-	}
-	for(var j = 0; j<curr_Height;j++){
-		tiles[0][j] = WALL;
-		tiles[curr_Width - 1][j] = WALL;
-	}
 	set_pos(wall_pos, WALL);
 
 }
@@ -314,7 +313,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 	}
 	stroke('#000000');  //Black Stroke - HTML Color Code #000000
 
-  coins_collected = 'Coins Collected: ' + p.coins_collected;
+  	coins_collected = 'Coins Collected: ' + p.coins_collected;
 	textSize(16);
 	text(coins_collected, 50, 200);
 	if (p.coins_collected == coin_goal) {
