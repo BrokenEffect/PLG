@@ -1,2 +1,4 @@
-test-level2.txt
+test-level4.txt
 testlevel.txt
+test-level2.txt
+test-level3.txt

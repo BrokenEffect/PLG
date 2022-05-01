@@ -35,6 +35,9 @@ var commands = [];
 var commands_text = '';
 var commands_list_text = [];
 
+  //This is for the current coin amount text
+var coins_collected_text = '';
+
 	//Variables Used to Keep Track of Adding Loop to Commands List
 var loop_status = false;
 var loop_status_text = '';
@@ -242,6 +245,15 @@ function start_level(lIndex){
 
 }
 
+function clear_lvl(){ // clears the level so old levels don't bleed into the next ones
+  for (var i = 0; i < MAX_SIZE; i++) {
+	tiles[i] = [];
+		for (var j = 0; j < MAX_SIZE; j++){
+			tiles[i][j] = SPACE;
+		}
+	}
+}
+
 function set_pos(data_pos, symbol){ //Finds coords based off index and sets the symbol to the coords in tiles
 	for (var k = 0; k < data_pos.length; k++){
 		var ind = data_pos[k].index;
@@ -301,6 +313,15 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		commands_text = commands_text + 'None'
 	}
 	stroke('#000000');  //Black Stroke - HTML Color Code #000000
+
+  coins_collected = 'Coins Collected: ' + p.coins_collected;
+	textSize(16);
+	text(coins_collected, 50, 200);
+	if (p.coins_collected == coin_goal) {
+		textSize(16);
+		text('Coin Goal Reached!', 50, 225);
+	}
+
 	textSize(16);
 	text(commands_text, 50, 700);
 		//Draw Text for Loop Status
@@ -398,7 +419,8 @@ function update_grid() { //this is essentially the game loop, its kind of turn-b
 			console.log("Coin Goal Reached!");
 		}
 	}
-	if (tiles[p.x][p.y] == GOAL){ //player is on the goal
+	//Spencer: I changed this to need the coin goal for the goal to work we can change it back for debugging
+	if (tiles[p.x][p.y] == GOAL && p.coin_goal_reached == true){ //player is on the goal
 		p.goal_reached = true;
 		console.log("Goal Reached!");
 		//TODO:  maybe display a "Level Complete" message and then return to level selection screen or next level
@@ -408,6 +430,7 @@ function update_grid() { //this is essentially the game loop, its kind of turn-b
 			console.log("Game Over (out of levels)"); //Add functionality for game over
 		}
 		else {
+			clear_lvl();
 			start_level(lvl_index);
 		}
 	}
@@ -430,10 +453,15 @@ async function run_commands() {
 			await sleep(400);
 
 	}
-	if (p.goal_reached || p.coin_goal_reached){
+	if (p.goal_reached && p.coin_goal_reached){ // changed from or to and
 		console.log("Algorithm successful!");
+		commands = [];
+		commands_list_text = [];
 	} else {
-		console.log("Algorihtm failed!");
+		console.log("Algorithm failed!");
+		commands = [];
+		commands_list_text = [];
+		start_level(lvl_index); //restart level on unsuccessful algorithm and resets command list on fail or win
 	}
 }
 //-----------------------------------------------
@@ -464,7 +492,7 @@ function keyPressed() {
 	}
 	allowed_move_blocks -= 1;
 
-	if(key== ' '){
+	if(key== ' ') {
 		console.log("SPACE!");
 		run_commands();
 	}
@@ -516,7 +544,7 @@ function moveUpButtonPressed() {
 			console.log('ERROR. PRIORITY NOT GIVEN...');
 		}
 	} else if (loop_status == true) {
-		console.log('Adding Move Up to Loop Commands List...');
+		console.log('Adding Move Up to Loop Commands List...'); 
 		loop_add.push(moveup);
 		loop_add_list_text.push("Move Up");
 	} else if (if_status == 1) {
