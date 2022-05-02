@@ -213,13 +213,17 @@ function start_level(lIndex){
 
 	curr_Width = lvl_data[lIndex][0].length;
 
-	//Get height based off symbols (assumes walls surround level)
+	//Get height based off symbols
 	curr_Height = 0;
-	for(var i = 0; i < lvl_data[lIndex].length; i++){
-		if (lvl_data[lIndex][i][0] == "#"){
+	for(var i = 0; i < lvl_data[lIndex].length - 1; i++){
+		if (isNaN(lvl_data[lIndex][i][0]) && !(lvl_data[lIndex][i][0] == "-")){
 			curr_Height += 1;
+			console.log("i: " + i, lvl_data[lIndex][i][0]);
 		}
 	}
+
+	console.log("curr_Height: " + curr_Height);
+	console.log("curr_Width:" + curr_Width);
 
 	coin_goal = lvl_data[lIndex].join(",").match(/c/g).length;
 	tmp_data_str = lvl_data[lIndex].join(",").replaceAll(",","");
