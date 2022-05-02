@@ -92,6 +92,9 @@ function preload() {
 	for (var i = 0; i < lvlConfig_data.length; i++){
 		lvl_data.push(loadStrings("./levels/" + lvlConfig_data[i]));
 	}
+	for (var k = 0; k < lvlConfig_data.length; k++) {
+		console.log("Config Data: " + levelConfig_data[k]);
+	}
 }
 
 //---------------- SETUP LEVELS -------------------
