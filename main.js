@@ -574,7 +574,7 @@ function button2Pressed() {
 		//MainPlayButtonPressed - Called on Play Button Pressed
 function mainPlayButtonPressed() {
 	lvl_index += 1;
-}	
+}
 
 /* ### Functions For Adding Commands ### */
 		//AddMoveUp - For Add Move Up Button
