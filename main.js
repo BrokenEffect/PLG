@@ -89,13 +89,11 @@ var lvlName;
 const lvl_data = [];
 function preload() {
 	lvlConfig_data = loadStrings('./levels/lvl-config.txt');
-	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvl_data.push(loadStrings("./levels/" + lvlConfig_data[i]));
-	}
 }
 
 //---------------- SETUP LEVELS -------------------
 function lvl_setup(){
+	lvlConfig_data.pop();	//Removes extra space that is for some reason there.
 	for (var i = 0; i < lvlConfig_data.length; i++){
 		levels.push(lvlConfig_data[i]);
 	}
@@ -103,7 +101,6 @@ function lvl_setup(){
 		lvlName = "./levels/" + lvlConfig_data[i];
 		loadStrings(lvlName, addLvl);
 	}
-	console.log("Current Levels: " + levels);
 }
 
 function addLvl(result) {
