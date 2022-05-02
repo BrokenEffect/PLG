@@ -123,81 +123,88 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 	//Perform level setup
 	lvl_setup();
 
-			/*
-		//Button examples
-		button1 = createButton('click me');
-		button1.position(10, 100);
-		button1.mousePressed(button1Pressed);
-		//
-		input1 = createInput("type here",type="text");
-		input1_text = "type here";
-		input1.size(80);
-		input1.input(input1Changed); //text is stored in the global variable: input1_text
-		input1.position(10,150)
-		//
-		button2 = createButton('<- print that');
-		button2.position(100, 150);
-		button2.mousePressed(button2Pressed);
-			*/
+		/*
+	//Button examples
+	button1 = createButton('click me');
+	button1.position(10, 100);
+	button1.mousePressed(button1Pressed);
+	//
+	input1 = createInput("type here",type="text");
+	input1_text = "type here";
+	input1.size(80);
+	input1.input(input1Changed); //text is stored in the global variable: input1_text
+	input1.position(10,150)
+	//
+	button2 = createButton('<- print that');
+	button2.position(100, 150);
+	button2.mousePressed(button2Pressed);
+		*/
 
-		/* ### Buttons to Add Commands ### */
-				/* MovementCommands */
-		//MoveUpButton
-		moveUpButton = createButton('Add Move Up');
-		moveUpButton.position(200, 300);
-		moveUpButton.mousePressed(moveUpButtonPressed);
-		//MoveDownButton
-		moveDownButton = createButton('Add Move Down');
-		moveDownButton.position(200, 325);
-		moveDownButton.mousePressed(moveDownButtonPressed);
-		//MoveLeftButton
-		moveLeftButton = createButton('Add Move Left');
-		moveLeftButton.position(200, 350);
-		moveLeftButton.mousePressed(moveLeftButtonPressed);
-		//MoveRightButton
-		moveRightButton = createButton('Add Move Right');
-		moveRightButton.position(200, 375);
-		moveRightButton.mousePressed(moveRightButtonPressed);
-				/* Loop Commands */
-		//BeginForLoopButton
-		beginForLoopButton = createButton('Begin For Loop');
-		beginForLoopButton.position(200, 400);
-		beginForLoopButton.mousePressed(beginForLoopPressed);
-		//EndForLoopButton
-		endForLoopButton = createButton('Close For Loop');
-		endForLoopButton.position(200, 425);
-		endForLoopButton.mousePressed(endForLoopPressed);
-		//IncrementLoopNumButton
-		incLoopNumButton = createButton('Add Loop Iteration');
-		incLoopNumButton.position(200, 450);
-		incLoopNumButton.mousePressed(incLoopNumPressed);
-		//DecrementLoopNumButton
-		decLoopNumButton = createButton('Remove Loop Iteration');
-		decLoopNumButton.position(200, 475);
-		decLoopNumButton.mousePressed(decLoopNumPressed);
-				/* If Commands */
-		//BeginIfButton
-		beginIfButton = createButton('Begin If Statement');
-		beginIfButton.position(200, 500);
-		beginIfButton.mousePressed(beginIfPressed);
-		//EndIfButton
-		endIfButton = createButton('Continue / Close If Statement');
-		endIfButton.position(200, 525);
-		endIfButton.mousePressed(endIfPressed);
-		//IncIfCondButton
-		incIfCondButton = createButton('Change If Condition (Increment)');
-		incIfCondButton.position(200, 550);
-		incIfCondButton.mousePressed(incIfCondPressed);
-		//DecIfCondButton
-		decIfCondButton = createButton('Change If Condition (Decrement)');
-		decIfCondButton.position(200, 575);
-		decIfCondButton.mousePressed(decIfCondPressed);
+		/* ### Buttons For Title Screen ### */
 
-			/*Remove Last Command */
-		//RemoveLastCommandButton
-		removeCommandButton = createButton('Remove Last Command');
-		removeCommandButton.position(200, 600);
-		removeCommandButton.mousePressed(removeCommandPressed);
+	//Play Button
+	mainPlayButton = createButton('Play');
+	mainPlayButton.position(930, 300);
+	mainPlayButton.mousePressed(mainPlayButtonPressed);
+
+	/* ### Buttons to Add Commands ### */
+			/* MovementCommands */
+	//MoveUpButton
+	moveUpButton = createButton('Add Move Up');
+	moveUpButton.position(200, 300);
+	moveUpButton.mousePressed(moveUpButtonPressed);
+	//MoveDownButton
+	moveDownButton = createButton('Add Move Down');
+	moveDownButton.position(200, 325);
+	moveDownButton.mousePressed(moveDownButtonPressed);
+	//MoveLeftButton
+	moveLeftButton = createButton('Add Move Left');
+	moveLeftButton.position(200, 350);
+	moveLeftButton.mousePressed(moveLeftButtonPressed);
+	//MoveRightButton
+	moveRightButton = createButton('Add Move Right');
+	moveRightButton.position(200, 375);
+	moveRightButton.mousePressed(moveRightButtonPressed);
+			/* Loop Commands */
+	//BeginForLoopButton
+	beginForLoopButton = createButton('Begin For Loop');
+	beginForLoopButton.position(200, 400);
+	beginForLoopButton.mousePressed(beginForLoopPressed);
+	//EndForLoopButton
+	endForLoopButton = createButton('Close For Loop');
+	endForLoopButton.position(200, 425);
+	endForLoopButton.mousePressed(endForLoopPressed);
+	//IncrementLoopNumButton
+	incLoopNumButton = createButton('Add Loop Iteration');
+	incLoopNumButton.position(200, 450);
+	incLoopNumButton.mousePressed(incLoopNumPressed);
+	//DecrementLoopNumButton
+	decLoopNumButton = createButton('Remove Loop Iteration');
+	decLoopNumButton.position(200, 475);
+	decLoopNumButton.mousePressed(decLoopNumPressed);
+			/* If Commands */
+	//BeginIfButton
+	beginIfButton = createButton('Begin If Statement');
+	beginIfButton.position(200, 500);
+	beginIfButton.mousePressed(beginIfPressed);
+	//EndIfButton
+	endIfButton = createButton('Continue / Close If Statement');
+	endIfButton.position(200, 525);
+	endIfButton.mousePressed(endIfPressed);
+	//IncIfCondButton
+	incIfCondButton = createButton('Change If Condition (Increment)');
+	incIfCondButton.position(200, 550);
+	incIfCondButton.mousePressed(incIfCondPressed);
+	//DecIfCondButton
+	decIfCondButton = createButton('Change If Condition (Decrement)');
+	decIfCondButton.position(200, 575);
+	decIfCondButton.mousePressed(decIfCondPressed);
+
+		/*Remove Last Command */
+	//RemoveLastCommandButton
+	removeCommandButton = createButton('Remove Last Command');
+	removeCommandButton.position(200, 600);
+	removeCommandButton.mousePressed(removeCommandPressed);
 
   	//
 	colorMode(HSB, 360, 100, 100); //changes color mode to HSB (aka HSL)
@@ -302,106 +309,150 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		}
 	}
 
-	/* ###  Text Elements  ### */
-		//Draw Text for Commands Added to Command List
-	commands_text = 'Commands Added: ';
-	if (commands_list_text.length != 0) {
-		for(var k = 0; k < commands_list_text.length; k++) {
-			commands_text = commands_text + commands_list_text[k];  //Adding Command Text to List
-			if (k != (commands_list_text.length - 1)) {
-				commands_text = commands_text + ', '
+	/* ### Hiding / Showing Elements Based on Level Index ### */
+
+	if (lvl_index != 0) {
+		/* ### Showing Button Elements ### */
+		moveUpButton.show();
+		moveDownButton.show();
+		moveLeftButton.show();
+		moveRightButton.show();
+		beginForLoopButton.show();
+		endForLoopButton.show();
+		incLoopNumButton.show();
+		decLoopNumButton.show();
+		beginIfButton.show();
+		endIfButton.show();
+		incIfCondButton.show();
+		decIfCondButton.show();
+		removeCommandButton.show();
+
+		/* ### Hiding Main Menu Buttons */
+		mainPlayButton.hide();
+
+		/* ###  Text Elements  ### */
+			//Draw Text for Commands Added to Command List
+		commands_text = 'Commands Added: ';
+		if (commands_list_text.length != 0) {
+			for(var k = 0; k < commands_list_text.length; k++) {
+				commands_text = commands_text + commands_list_text[k];  //Adding Command Text to List
+				if (k != (commands_list_text.length - 1)) {
+					commands_text = commands_text + ', '
+				}
 			}
+		} else {
+			commands_text = commands_text + 'None'
+		}
+		stroke('#000000');  //Black Stroke - HTML Color Code #000000
+		textSize(14);
+		textWrap(WORD);
+		text(commands_text, 50, 700, 1550);
+			//Draw Text for Loop Status
+		loop_status_text = 'Loop Status: ';
+		if (loop_status == false) {
+			loop_status_text = loop_status_text + 'Closed';
+		} else {
+			loop_status_text = loop_status_text + 'Open';
+		}
+		textSize(14);
+		textWrap(WORD);
+		text(loop_status_text, 50, 725, 1550);
+			//Only Draw Loop Command and Loop Num Text if Loop Open
+		if (loop_status == true) {
+				//Draw Text for Loop Commands
+			loop_add_text = 'Loop Commands Added: ';
+			if (loop_add_list_text.length != 0) {
+				for (var m = 0; m < loop_add_list_text.length; m++) {
+					loop_add_text = loop_add_text + loop_add_list_text[m];
+					if (m != (loop_add_list_text.length - 1)) {
+						loop_add_text = loop_add_text + ', ';
+					}
+				}
+			} else {
+				loop_add_text = loop_add_text + 'None';
+			}
+			textSize(14);
+			textWrap(WORD);
+			text(loop_add_text, 50, 750, 1550);
+				//Draw Text for Loop Num
+			loop_num_text = 'Number of Loop Iterations: ' + loop_num;
+			textSize(14);
+			textWrap(WORD);
+			text(loop_num_text, 50, 775, 1550);
+		}
+			//Only Draw If Texts if if is Open
+		if (if_status == 0) {
+			if_status_text = 'If Status: Closed';
+		} else if (if_status == 1) {
+			if_status_text = 'If Status: Open. Adding Commands for True';
+		} else if (if_status == 2) {
+			if_status_text = 'If Status: Open. Adding Commands for False';
+		}
+		textSize(14);
+		textWrap(WORD);
+		text(if_status_text, 50, 800, 1550);
+		if ((if_status == 1)||(if_status == 2)) {
+			if_true_text = 'If (True) Commands Added: ';
+			if (if_true_list_text.length != 0) {
+				for (var m = 0; m < if_true_list_text.length; m++) {
+					if_true_text = if_true_text + if_true_list_text[m];
+					if (m != (if_true_list_text.length - 1)) {
+						if_true_text = if_true_text + ', ';
+					}
+				}
+			} else {
+				if_true_text = if_true_text + 'None';
+			}
+			textSize(14);
+			textWrap(WORD);
+			text(if_true_text, 50, 825, 1550);
+		}
+		if ((if_status == 2)||(if_status == 1)) {
+			if_else_text = 'If (False) Commands Added: ';
+			if (if_else_list_text.length != 0) {
+				for (var m = 0; m < if_else_list_text.length; m++) {
+					if_else_text = if_else_text + if_else_list_text[m];
+					if (m != (if_else_list_text.length - 1)) {
+						if_else_text = if_else_text + ', ';
+					}
+				}
+			} else {
+				if_else_text = if_else_text + 'None';
+			}
+			textSize(14);
+			textWrap(WORD);
+			text(if_else_text, 50, 850, 1550);
+		}
+		if ((if_status == 1)||(if_status == 2)) {
+			if_cond_text = 'If Condition: ';
+			if_cond_text = if_cond_text + if_cond_list_text[if_cond_num];  //Can make this look nicer later.
+			textSize(14);
+			textWrap(WORD);
+			text(if_cond_text, 50, 875, 1550);
 		}
 	} else {
-		commands_text = commands_text + 'None'
-	}
-	stroke('#000000');  //Black Stroke - HTML Color Code #000000
+			/* ### Showing Main Menu Buttons ### */
+			mainPlayButton.show();
 
-  	coins_collected = 'Coins Collected: ' + p.coins_collected;
-	textSize(16);
-	text(coins_collected, 50, 200);
-	if (p.coins_collected == coin_goal) {
-		textSize(16);
-		text('Coin Goal Reached!', 50, 225);
-	}
+			/* ### Main Menu Text Elements ### */
+			textSize(24);
+			textWrap(WORD);
+			text('Welcome to PLG!', 700, 240, 400);
 
-	textSize(16);
-	text(commands_text, 50, 700);
-		//Draw Text for Loop Status
-	loop_status_text = 'Loop Status: ';
-	if (loop_status == false) {
-		loop_status_text = loop_status_text + 'Closed';
-	} else {
-		loop_status_text = loop_status_text + 'Open';
-	}
-	textSize(16);
-	text(loop_status_text, 50, 725);
-		//Only Draw Loop Command and Loop Num Text if Loop Open
-	if (loop_status == true) {
-			//Draw Text for Loop Commands
-		loop_add_text = 'Loop Commands Added: ';
-		if (loop_add_list_text.length != 0) {
-			for (var m = 0; m < loop_add_list_text.length; m++) {
-				loop_add_text = loop_add_text + loop_add_list_text[m];
-				if (m != (loop_add_list_text.length - 1)) {
-					loop_add_text = loop_add_text + ', ';
-				}
-			}
-		} else {
-			loop_add_text = loop_add_text + 'None';
-		}
-		textSize(16);
-		text(loop_add_text, 50, 750);
-			//Draw Text for Loop Num
-		loop_num_text = 'Number of Loop Iterations: ' + loop_num;
-		textSize(16);
-		text(loop_num_text, 50, 775);
-	}
-		//Only Draw If Texts if if is Open
-	if (if_status == 0) {
-		if_status_text = 'If Status: Closed';
-	} else if (if_status == 1) {
-		if_status_text = 'If Status: Open. Adding Commands for True';
-	} else if (if_status == 2) {
-		if_status_text = 'If Status: Open. Adding Commands for False';
-	}
-	textSize(16);
-	text(if_status_text, 50, 800);
-	if ((if_status == 1)||(if_status == 2)) {
-		if_true_text = 'If (True) Commands Added: ';
-		if (if_true_list_text.length != 0) {
-			for (var m = 0; m < if_true_list_text.length; m++) {
-				if_true_text = if_true_text + if_true_list_text[m];
-				if (m != (if_true_list_text.length - 1)) {
-					if_true_text = if_true_text + ', ';
-				}
-			}
-		} else {
-			if_true_text = if_true_text + 'None';
-		}
-		textSize(16);
-		text(if_true_text, 50, 825);
-	}
-	if ((if_status == 2)||(if_status == 1)) {
-		if_else_text = 'If (False) Commands Added: ';
-		if (if_else_list_text.length != 0) {
-			for (var m = 0; m < if_else_list_text.length; m++) {
-				if_else_text = if_else_text + if_else_list_text[m];
-				if (m != (if_else_list_text.length - 1)) {
-					if_else_text = if_else_text + ', ';
-				}
-			}
-		} else {
-			if_else_text = if_else_text + 'None';
-		}
-		textSize(16);
-		text(if_else_text, 50, 850);
-	}
-	if ((if_status == 1)||(if_status == 2)) {
-		if_cond_text = 'If Condition: ';
-		if_cond_text = if_cond_text + if_cond_list_text[if_cond_num];  //Can make this look nicer later.
-		textSize(16);
-		text(if_cond_text, 50, 875);
+			/* ### Hiding Button Elements ### */
+			moveUpButton.hide();
+			moveDownButton.hide();
+			moveLeftButton.hide();
+			moveRightButton.hide();
+			beginForLoopButton.hide();
+			endForLoopButton.hide();
+			incLoopNumButton.hide();
+			decLoopNumButton.hide();
+			beginIfButton.hide();
+			endIfButton.hide();
+			incIfCondButton.hide();
+			decIfCondButton.hide();
+			removeCommandButton.hide();
 	}
 
 }
@@ -525,6 +576,12 @@ function button2Pressed() {
 }
 	*/
 
+/* ### Functions For Title Screen ### */
+		//MainPlayButtonPressed - Called on Play Button Pressed
+function mainPlayButtonPressed() {
+	lvl_index += 1;
+}	
+
 /* ### Functions For Adding Commands ### */
 		//AddMoveUp - For Add Move Up Button
 function moveUpButtonPressed() {
@@ -547,7 +604,7 @@ function moveUpButtonPressed() {
 			console.log('ERROR. PRIORITY NOT GIVEN...');
 		}
 	} else if (loop_status == true) {
-		console.log('Adding Move Up to Loop Commands List...'); 
+		console.log('Adding Move Up to Loop Commands List...');
 		loop_add.push(moveup);
 		loop_add_list_text.push("Move Up");
 	} else if (if_status == 1) {
