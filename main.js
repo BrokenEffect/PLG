@@ -88,9 +88,9 @@ let lvlConfig_data;
 var lvlName;
 const lvl_data = [];
 function preload() {
-	lvlConfig_data = loadStrings('levels/lvl-config.txt');
+	lvlConfig_data = loadStrings('./levels/lvl-config.txt');
 	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvl_data.push(loadStrings("levels/" + lvlConfig_data[i]));
+		lvl_data.push(loadStrings("./levels/" + lvlConfig_data[i]));
 	}
 }
 
@@ -100,7 +100,7 @@ function lvl_setup(){
 		levels.push(lvlConfig_data[i]);
 	}
 	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvlName = "levels/" + lvlConfig_data[i];
+		lvlName = "./levels/" + lvlConfig_data[i];
 		loadStrings(lvlName, addLvl);
 	}
 	console.log("Current Levels: " + levels);
@@ -580,7 +580,7 @@ function button2Pressed() {
 		//MainPlayButtonPressed - Called on Play Button Pressed
 function mainPlayButtonPressed() {
 	lvl_index += 1;
-}	
+}
 
 /* ### Functions For Adding Commands ### */
 		//AddMoveUp - For Add Move Up Button
