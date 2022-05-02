@@ -88,12 +88,9 @@ let lvlConfig_data;
 var lvlName;
 const lvl_data = [];
 function preload() {
-	lvlConfig_data = loadStrings('./levels/lvl-config.txt');
+	lvlConfig_data = loadStrings('levels/lvl-config.txt');
 	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvl_data.push(loadStrings("./levels/" + lvlConfig_data[i]));
-	}
-	for (var k = 0; k < lvlConfig_data.length; k++) {
-		console.log("Config Data: " + levelConfig_data[k]);
+		lvl_data.push(loadStrings("levels/" + lvlConfig_data[i]));
 	}
 }
 
@@ -103,7 +100,7 @@ function lvl_setup(){
 		levels.push(lvlConfig_data[i]);
 	}
 	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvlName = "./levels/" + lvlConfig_data[i];
+		lvlName = "levels/" + lvlConfig_data[i];
 		loadStrings(lvlName, addLvl);
 	}
 	console.log("Current Levels: " + levels);
