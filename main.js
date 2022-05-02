@@ -88,9 +88,9 @@ let lvlConfig_data;
 var lvlName;
 const lvl_data = [];
 function preload() {
-	lvlConfig_data = loadStrings('levels/lvl-config.txt');
+	lvlConfig_data = loadStrings('./levels/lvl-config.txt');
 	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvl_data.push(loadStrings("levels/" + lvlConfig_data[i]));
+		lvl_data.push(loadStrings("./levels/" + lvlConfig_data[i]));
 	}
 }
 
@@ -100,7 +100,7 @@ function lvl_setup(){
 		levels.push(lvlConfig_data[i]);
 	}
 	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvlName = "levels/" + lvlConfig_data[i];
+		lvlName = "./levels/" + lvlConfig_data[i];
 		loadStrings(lvlName, addLvl);
 	}
 	console.log("Current Levels: " + levels);
@@ -212,8 +212,6 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 
 
 //---------------- START LEVEL -------------------
-// note: pass in a name like "test-level.txt" and it will
-//			   begin setting up that level, then start the game
 
 
 function start_level(lIndex){
@@ -225,12 +223,8 @@ function start_level(lIndex){
 	for(var i = 0; i < lvl_data[lIndex].length - 1; i++){
 		if (isNaN(lvl_data[lIndex][i][0]) && !(lvl_data[lIndex][i][0] == "-")){
 			curr_Height += 1;
-			console.log("i: " + i, lvl_data[lIndex][i][0]);
 		}
 	}
-
-	console.log("curr_Height: " + curr_Height);
-	console.log("curr_Width:" + curr_Width);
 
 	coin_goal = lvl_data[lIndex].join(",").match(/c/g).length;
 	tmp_data_str = lvl_data[lIndex].join(",").replaceAll(",","");
