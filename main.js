@@ -337,7 +337,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		stroke('#000000');  //Black Stroke - HTML Color Code #000000
 		textSize(24);
 		textWrap(WORD);
-		text(lvl_text, 700, 140, 300);
+		text(lvl_text, 730, 140, 300);
 
 			//Text to above Command Buttons
 		textSize(14);
