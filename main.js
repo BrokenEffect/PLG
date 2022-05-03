@@ -340,6 +340,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		} else {
 			commands_text = commands_text + 'None'
 		}
+		fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
 		stroke('#000000');  //Black Stroke - HTML Color Code #000000
 		textSize(14);
 		textWrap(WORD);
@@ -432,6 +433,8 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			mainPlayButton.show();
 
 			/* ### Main Menu Text Elements ### */
+			fill('#FFFFFF');
+			stroke('#000000');  //Black Stroke - HTML Color Code #000000
 			textSize(24);
 			textWrap(WORD);
 			text('Welcome to PLG!', 700, 140, 400);
