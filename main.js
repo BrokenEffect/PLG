@@ -151,64 +151,64 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 			/* MovementCommands */
 	//MoveUpButton
 	moveUpButton = createButton('Add Move Up');
-	moveUpButton.position(200, 300);
+	moveUpButton.position(200, 200);
 	moveUpButton.mousePressed(moveUpButtonPressed);
 	//MoveDownButton
 	moveDownButton = createButton('Add Move Down');
-	moveDownButton.position(200, 325);
+	moveDownButton.position(200, 225);
 	moveDownButton.mousePressed(moveDownButtonPressed);
 	//MoveLeftButton
 	moveLeftButton = createButton('Add Move Left');
-	moveLeftButton.position(200, 350);
+	moveLeftButton.position(200, 250);
 	moveLeftButton.mousePressed(moveLeftButtonPressed);
 	//MoveRightButton
 	moveRightButton = createButton('Add Move Right');
-	moveRightButton.position(200, 375);
+	moveRightButton.position(200, 275);
 	moveRightButton.mousePressed(moveRightButtonPressed);
 			/* Loop Commands */
 	//BeginForLoopButton
 	beginForLoopButton = createButton('Begin For Loop');
-	beginForLoopButton.position(200, 400);
+	beginForLoopButton.position(200, 325);
 	beginForLoopButton.mousePressed(beginForLoopPressed);
 	//EndForLoopButton
 	endForLoopButton = createButton('Close For Loop');
-	endForLoopButton.position(200, 425);
+	endForLoopButton.position(200, 350);
 	endForLoopButton.mousePressed(endForLoopPressed);
 	//IncrementLoopNumButton
 	incLoopNumButton = createButton('Add Loop Iteration');
-	incLoopNumButton.position(200, 450);
+	incLoopNumButton.position(200, 375);
 	incLoopNumButton.mousePressed(incLoopNumPressed);
 	//DecrementLoopNumButton
 	decLoopNumButton = createButton('Remove Loop Iteration');
-	decLoopNumButton.position(200, 475);
+	decLoopNumButton.position(200, 400);
 	decLoopNumButton.mousePressed(decLoopNumPressed);
 			/* If Commands */
 	//BeginIfButton
 	beginIfButton = createButton('Begin If Statement');
-	beginIfButton.position(200, 500);
+	beginIfButton.position(200, 450);
 	beginIfButton.mousePressed(beginIfPressed);
 	//EndIfButton
 	endIfButton = createButton('Continue / Close If Statement');
-	endIfButton.position(200, 525);
+	endIfButton.position(200, 475);
 	endIfButton.mousePressed(endIfPressed);
 	//IncIfCondButton
 	incIfCondButton = createButton('Change If Condition (Increment)');
-	incIfCondButton.position(200, 550);
+	incIfCondButton.position(200, 500);
 	incIfCondButton.mousePressed(incIfCondPressed);
 	//DecIfCondButton
 	decIfCondButton = createButton('Change If Condition (Decrement)');
-	decIfCondButton.position(200, 575);
+	decIfCondButton.position(200, 525);
 	decIfCondButton.mousePressed(decIfCondPressed);
 
 		/*Remove Last Command */
 	//RemoveLastCommandButton
 	removeCommandButton = createButton('Remove Last Command');
-	removeCommandButton.position(200, 600);
+	removeCommandButton.position(200, 575);
 	removeCommandButton.mousePressed(removeCommandPressed);
 
 		/* Run Commands */
 	runCommandsButton = createButton('Run Commands');
-	runCommandsButton.position(200, 640);
+	runCommandsButton.position(200, 625);
 	runCommandsButton.mousePressed(runCommandsPressed);
 
   	//
@@ -338,6 +338,11 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		textSize(24);
 		textWrap(WORD);
 		text(lvl_text, 700, 140, 300);
+
+			//Text to above Command Buttons
+		textSize(14);
+		textWrap(WORD);
+		text('Add Commands:', 50, 200, 200);
 
 			//Draw Text for Commands Added to Command List
 		commands_text = 'Commands Added: ';
