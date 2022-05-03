@@ -335,9 +335,9 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		lvl_text = 'Level: ' + lvl_index;
 		fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
 		stroke('#000000');  //Black Stroke - HTML Color Code #000000
-		textSize(14);
+		textSize(24);
 		textWrap(WORD);
-		text(commands_text, 700, 140, 300);
+		text(lvl_text, 700, 140, 300);
 
 			//Draw Text for Commands Added to Command List
 		commands_text = 'Commands Added: ';
@@ -351,8 +351,8 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		} else {
 			commands_text = commands_text + 'None'
 		}
-		fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
-		stroke('#000000');  //Black Stroke - HTML Color Code #000000
+		//fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
+		//stroke('#000000');  //Black Stroke - HTML Color Code #000000
 		textSize(14);
 		textWrap(WORD);
 		text(commands_text, 50, 700, 1550);
