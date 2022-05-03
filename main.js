@@ -577,7 +577,7 @@ function button2Pressed() {
 /* ### Functions For Title Screen ### */
 		//MainPlayButtonPressed - Called on Play Button Pressed
 function mainPlayButtonPressed() {
-	lvl_index += 2;
+	lvl_index += 1;
 }
 
 /* ### Functions For Adding Commands ### */
