@@ -82,6 +82,9 @@ for (var i = 0; i < MAX_SIZE; i++) {
 const levels = [];
 var lvl_index = 0;
 
+//Text Var to Display Level Number
+var lvl_text = '';
+
 //---------------- PRELOAD FUNCTION -------------------
 //NOTE: lvl-config.txt loads list of levels in order from top to bottom. To add a level, place the txt file name in the desired position in lvl-config.txt. Then place the txt file in the levels directory.
 let lvlConfig_data;
@@ -328,6 +331,14 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		mainPlayButton.hide();
 
 		/* ###  Text Elements  ### */
+			//Text to show Level Number
+		lvl_text = 'Level: ' + lvl_index;
+		fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
+		stroke('#000000');  //Black Stroke - HTML Color Code #000000
+		textSize(14);
+		textWrap(WORD);
+		text(commands_text, 700, 140, 300);
+
 			//Draw Text for Commands Added to Command List
 		commands_text = 'Commands Added: ';
 		if (commands_list_text.length != 0) {
