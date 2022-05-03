@@ -144,7 +144,7 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 
 	//Play Button
 	mainPlayButton = createButton('Play');
-	mainPlayButton.position(930, 300);
+	mainPlayButton.position(930, 200);
 	mainPlayButton.mousePressed(mainPlayButtonPressed);
 
 	/* ### Buttons to Add Commands ### */
@@ -205,6 +205,11 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 	removeCommandButton = createButton('Remove Last Command');
 	removeCommandButton.position(200, 600);
 	removeCommandButton.mousePressed(removeCommandPressed);
+
+		/* Run Commands */
+	runCommandsButton = createButton('Run Commands');
+	runCommandsButton.position(200, 640);
+	runCommandsButton.mousePressed(runCommandsPressed);
 
   	//
 	colorMode(HSB, 360, 100, 100); //changes color mode to HSB (aka HSL)
@@ -326,6 +331,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		incIfCondButton.show();
 		decIfCondButton.show();
 		removeCommandButton.show();
+		runCommandsButton.show();
 
 		/* ### Hiding Main Menu Buttons */
 		mainPlayButton.hide();
@@ -437,7 +443,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			/* ### Main Menu Text Elements ### */
 			textSize(24);
 			textWrap(WORD);
-			text('Welcome to PLG!', 700, 240, 400);
+			text('Welcome to PLG!', 700, 140, 400);
 
 			/* ### Hiding Button Elements ### */
 			moveUpButton.hide();
@@ -453,6 +459,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			incIfCondButton.hide();
 			decIfCondButton.hide();
 			removeCommandButton.hide();
+			runCommandsButton.hide();
 	}
 
 }
@@ -982,6 +989,12 @@ function decIfCondPressed() {
 	} else {
 		console.log('If Statement is Closed...');
 	}
+}
+
+		//RunCommandsPressed - Runs the Command List
+function runCommandsPressed() {
+	console.log("Running Commands List");
+	run_commands();
 }
 
 // COMMANDS LIST
