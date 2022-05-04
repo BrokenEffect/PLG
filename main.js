@@ -11,6 +11,7 @@ const ENEMY = 'e';
 var scl = 30; //scale, how many pixels per square
 var cWidth = 1600;
 var cHeight = 900;
+var DEBUG = 123;
 
 
 const MAX_SIZE = 50; //max size of grid, no levels bigger than 50x50 (not that we would make any..)
@@ -86,12 +87,21 @@ var lvl_index = 0;
 //NOTE: lvl-config.txt loads list of levels in order from top to bottom. To add a level, place the txt file name in the desired position in lvl-config.txt. Then place the txt file in the levels directory.
 let lvlConfig_data;
 var lvlName;
+
+let player_img;
+let enemy_img;
+let goal_img;
+let coin_img;
+
 const lvl_data = [];
 function preload() {
+	
 	lvlConfig_data = loadStrings('levels/lvl-config.txt');
+
 	for (var i = 0; i < lvlConfig_data.length; i++){
 		lvl_data.push(loadStrings("levels/" + lvlConfig_data[i]));
 	}
+	
 }
 
 //---------------- SETUP LEVELS -------------------
@@ -103,6 +113,8 @@ function lvl_setup(){
 		lvlName = "levels/" + lvlConfig_data[i];
 		loadStrings(lvlName, addLvl);
 	}
+	console.log(lvlConfig_data);
+	console.log("REEE");
 	console.log("Current Levels: " + levels);
 }
 
@@ -151,59 +163,59 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 			/* MovementCommands */
 	//MoveUpButton
 	moveUpButton = createButton('Add Move Up');
-	moveUpButton.position(200, 300);
+	moveUpButton.position(200, 375);
 	moveUpButton.mousePressed(moveUpButtonPressed);
 	//MoveDownButton
 	moveDownButton = createButton('Add Move Down');
-	moveDownButton.position(200, 325);
+	moveDownButton.position(200, 400);
 	moveDownButton.mousePressed(moveDownButtonPressed);
 	//MoveLeftButton
 	moveLeftButton = createButton('Add Move Left');
-	moveLeftButton.position(200, 350);
+	moveLeftButton.position(200, 425);
 	moveLeftButton.mousePressed(moveLeftButtonPressed);
 	//MoveRightButton
 	moveRightButton = createButton('Add Move Right');
-	moveRightButton.position(200, 375);
+	moveRightButton.position(200, 450);
 	moveRightButton.mousePressed(moveRightButtonPressed);
 			/* Loop Commands */
 	//BeginForLoopButton
 	beginForLoopButton = createButton('Begin For Loop');
-	beginForLoopButton.position(200, 400);
+	beginForLoopButton.position(200, 475);
 	beginForLoopButton.mousePressed(beginForLoopPressed);
 	//EndForLoopButton
 	endForLoopButton = createButton('Close For Loop');
-	endForLoopButton.position(200, 425);
+	endForLoopButton.position(200, 500);
 	endForLoopButton.mousePressed(endForLoopPressed);
 	//IncrementLoopNumButton
 	incLoopNumButton = createButton('Add Loop Iteration');
-	incLoopNumButton.position(200, 450);
+	incLoopNumButton.position(200, 525);
 	incLoopNumButton.mousePressed(incLoopNumPressed);
 	//DecrementLoopNumButton
 	decLoopNumButton = createButton('Remove Loop Iteration');
-	decLoopNumButton.position(200, 475);
+	decLoopNumButton.position(200, 550);
 	decLoopNumButton.mousePressed(decLoopNumPressed);
 			/* If Commands */
 	//BeginIfButton
 	beginIfButton = createButton('Begin If Statement');
-	beginIfButton.position(200, 500);
+	beginIfButton.position(200, 575);
 	beginIfButton.mousePressed(beginIfPressed);
 	//EndIfButton
 	endIfButton = createButton('Continue / Close If Statement');
-	endIfButton.position(200, 525);
+	endIfButton.position(200, 600);
 	endIfButton.mousePressed(endIfPressed);
 	//IncIfCondButton
 	incIfCondButton = createButton('Change If Condition (Increment)');
-	incIfCondButton.position(200, 550);
+	incIfCondButton.position(200, 625);
 	incIfCondButton.mousePressed(incIfCondPressed);
 	//DecIfCondButton
 	decIfCondButton = createButton('Change If Condition (Decrement)');
-	decIfCondButton.position(200, 575);
+	decIfCondButton.position(200, 650);
 	decIfCondButton.mousePressed(decIfCondPressed);
 
 		/*Remove Last Command */
 	//RemoveLastCommandButton
 	removeCommandButton = createButton('Remove Last Command');
-	removeCommandButton.position(200, 600);
+	removeCommandButton.position(200, 675);
 	removeCommandButton.mousePressed(removeCommandPressed);
 
   	//
@@ -332,13 +344,15 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 
 		/* ###  Text Elements  ### */
 			//Draw Text for Commands Added to Command List
-		commands_text = 'Commands Added: ';
+		commands_text = 'Commands Added:\n';
 		if (commands_list_text.length != 0) {
 			for(var k = 0; k < commands_list_text.length; k++) {
-				commands_text = commands_text + commands_list_text[k];  //Adding Command Text to List
+				commands_text = commands_text + commands_list_text[k] +'\n';  //Adding Command Text to List
+				/* commas
 				if (k != (commands_list_text.length - 1)) {
-					commands_text = commands_text + ', '
+					commands_text = commands_text
 				}
+				*/
 			}
 		} else {
 			commands_text = commands_text + 'None'
@@ -346,7 +360,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		stroke('#000000');  //Black Stroke - HTML Color Code #000000
 		textSize(14);
 		textWrap(WORD);
-		text(commands_text, 50, 700, 1550);
+		text(commands_text, 50, 50, 1550);
 			//Draw Text for Loop Status
 		loop_status_text = 'Loop Status: ';
 		if (loop_status == false) {
