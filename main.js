@@ -640,7 +640,7 @@ async function run_commands() {
 		current_loop_blocks = 0;
 		current_if_blocks = 0;
 	} else {
-		console.log("Algorithm failed!");
+		//console.log("Algorithm failed!");
 		commands = [];
 		commands_list_text = [];
 		commands_type = [];
