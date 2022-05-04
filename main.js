@@ -732,7 +732,7 @@ function instructionsPressed() {
 /* ### Functions For Adding Commands ### */
 		//AddMoveUp - For Add Move Up Button
 function moveUpButtonPressed() {
-	if (current_move_blocks >= allowed_move_blocks) {
+	if (current_move_blocks >= allowed_move_blocks && (if_status == 0)) {
 		console.log('Max Number of Move Blocks Already Reached');
 	} else {
 		if (if_status == 0) {
@@ -761,7 +761,7 @@ function moveUpButtonPressed() {
 }
 		//AddMoveDown - For Add Move Down Button
 function moveDownButtonPressed() {
-	if (current_move_blocks >= allowed_move_blocks) {
+	if (current_move_blocks >= allowed_move_blocks && (if_status == 0)) {
 		console.log('Max Number of Move Blocks Already Reached');
 	} else {
 		if (if_status == 0) {
@@ -789,7 +789,7 @@ function moveDownButtonPressed() {
 }
 		//AddMoveLeft - For Add Move Left Button
 function moveLeftButtonPressed() {
-	if (current_move_blocks >= allowed_move_blocks) {
+	if (current_move_blocks >= allowed_move_blocks && (if_status == 0)) {
 		console.log('Max Number of Move Blocks Already Reached');
 	} else {
 		if (if_status == 0) {
@@ -817,7 +817,7 @@ function moveLeftButtonPressed() {
 }
 		//AddMoveRight - For Add Move Right Button
 function moveRightButtonPressed() {
-	if (current_move_blocks >= allowed_move_blocks) {
+	if (current_move_blocks >= allowed_move_blocks && (if_status == 0)) {
 		console.log('Max Number of Move Blocks Already Reached');
 	} else {
 		if (if_status == 0) {
