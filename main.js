@@ -78,9 +78,9 @@ for (var i = 0; i < MAX_SIZE; i++) {
 	}
 }
 
-//List of levels
-const levels = [];
-var lvl_index = 0;
+//Level Variables
+const levels = [];	//List of levels
+var lvl_index = 0;	//level iterator
 
 //Text Var to Display Level Number
 var lvl_text = '';
@@ -241,7 +241,9 @@ function start_level(lIndex){
 	set_pos(coin_pos, COIN);
 	set_pos(enemy_pos, ENEMY);
 	set_pos(goal_pos, GOAL);
-	allowed_move_blocks = lvl_data[lIndex][curr_Height + 2];
+	allowed_move_blocks = lvl_data[lIndex][curr_Height + 1];
+	allowed_if_blocks = lvl_data[lIndex][curr_Height + 2];
+	allowed_loop_blocks = lvl_data[lIndex][curr_Height + 3];
 
 	//Set player position
 	var player_pos = tmp_data_str.indexOf("p");
