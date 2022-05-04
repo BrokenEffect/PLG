@@ -255,7 +255,6 @@ function start_level(lIndex){
 		}
 	}
 
-	coin_goal = lvl_data[lIndex].join(",").match(/c/g).length;
 	tmp_data_str = lvl_data[lIndex].join(",").replaceAll(",","");
 	const coin_pos = [...tmp_data_str.matchAll("c")];
 	const enemy_pos = [...tmp_data_str.matchAll("e")];
@@ -268,6 +267,7 @@ function start_level(lIndex){
 	allowed_move_blocks = lvl_data[lIndex][curr_Height + 1];
 	allowed_if_blocks = lvl_data[lIndex][curr_Height + 2];
 	allowed_loop_blocks = lvl_data[lIndex][curr_Height + 3];
+	coin_goal = lvl_data[lIndex][curr_Height + 4];
 
 	//Set player position
 	var player_pos = tmp_data_str.indexOf("p");
