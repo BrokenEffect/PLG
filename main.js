@@ -380,13 +380,15 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			text('Current / Maximum If Statements: ' + current_if_blocks + "/" + allowed_if_blocks, 1200, 190, 350);
 
 				//Draw Text for Commands Added to Command List
-			commands_text = 'Commands Added: ';
+			commands_text = 'Commands Added:\n';
 			if (commands_list_text.length != 0) {
 				for(var k = 0; k < commands_list_text.length; k++) {
-					commands_text = commands_text + commands_list_text[k];  //Adding Command Text to List
+					commands_text = commands_text + commands_list_text[k] + '\n';  //Adding Command Text to List
+					/*
 					if (k != (commands_list_text.length - 1)) {
 						commands_text = commands_text + ', '
 					}
+					*/
 				}
 			} else {
 				commands_text = commands_text + 'None'
@@ -395,7 +397,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 			//stroke('#000000');  //Black Stroke - HTML Color Code #000000
 			textSize(14);
 			textWrap(WORD);
-			text(commands_text, 50, 700, 1550);
+			text(commands_text, 250, 50, 1550);
 				//Draw Text for Loop Status
 			loop_status_text = 'Loop Status: ';
 			if (loop_status == false) {
