@@ -502,6 +502,26 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 				instructionsButton.hide();
 		}
 	} else {
+		//Hiding All other buttons
+		moveUpButton.hide();
+		moveDownButton.hide();
+		moveLeftButton.hide();
+		moveRightButton.hide();
+		beginForLoopButton.hide();
+		endForLoopButton.hide();
+		incLoopNumButton.hide();
+		decLoopNumButton.hide();
+		beginIfButton.hide();
+		endIfButton.hide();
+		incIfCondButton.hide();
+		decIfCondButton.hide();
+		removeCommandButton.hide();
+		runCommandsButton.hide();
+
+		//Instructions Button is the only one that should be showing.
+		instructionsButton.show();
+
+		//Instructions Text
 		instructions_text = 'Instructions: \nYour goal is to collect all coins and reach the goal without touching an of the enemies / traps.'
 		+ '\nIn order to collect coins and reach the goal. You must give the player a list of commands to execute.'
 		+ '\nYou can give the player commands by using buttons on the left side of the screen.'
@@ -514,7 +534,8 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 		+ '\nIf statements have two command lists for True and False cases. Opening an If Statement will allow you to add commands to the True Statement Command List.'
 		+ '\nYou can add commands to the False List by clicking the Continue / Close If Statement. You can close the If Statement by clicking Continue / Close again.'
 		+ '\nClick the Remove Command button to remove the last command in the active command list.'
-		+ '\nRun the commands list by clicking the Run Commands button.';
+		+ '\nRun the commands list by clicking the Run Commands button.'
+		+ '\nClick the View Instructions button to return to the game.';
 
 		fill('#FFFFFF');
 		stroke('#000000');  //Black Stroke - HTML Color Code #000000
