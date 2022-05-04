@@ -267,7 +267,7 @@ function start_level(lIndex){
 	allowed_move_blocks = lvl_data[lIndex][curr_Height + 1];
 	allowed_if_blocks = lvl_data[lIndex][curr_Height + 2];
 	allowed_loop_blocks = lvl_data[lIndex][curr_Height + 3];
-	coin_goal = lvl_data[lIndex][curr_Height + 4];
+	coin_goal = int(lvl_data[lIndex][curr_Height + 4]);
 
 	//Set player position
 	var player_pos = tmp_data_str.indexOf("p");
@@ -587,6 +587,9 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 function update_grid() { //this is essentially the game loop, its kind of turn-based,
 												 // getting called after each action like the player moving
 
+	if (coin_goal == 0){
+		p.coin_goal_reached = true;
+	}
 	//do some turn-based operations, like checking if the player is ontop of a coin now, etc.
 	if (tiles[p.x][p.y] == COIN){ //player is on a coin
 		tiles[p.x][p.y] = SPACE;
