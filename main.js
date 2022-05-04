@@ -661,6 +661,7 @@ const sleep = (millis) => {
 
 //this is only for debugging, we aren't going to control the player with arrow keys
 function keyPressed() {
+	/*
 	if(keyCode === UP_ARROW) {
 		moveup();
 		update_grid();
@@ -683,6 +684,7 @@ function keyPressed() {
 		console.log("SPACE!");
 		run_commands();
 	}
+	*/
 }
 
 // drag and drop example
