@@ -352,7 +352,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 
 			/* ###  Text Elements  ### */
 				//Text to show Level Number
-			lvl_text = 'Level: ' + lvl_index;
+			lvl_text = 'Level: ' + lvl_index + 1;
 			fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
 			stroke('#000000');  //Black Stroke - HTML Color Code #000000
 			textSize(24);
@@ -615,7 +615,7 @@ async function run_commands() {
 		current_move_blocks = 0;
 		current_loop_blocks = 0;
 		current_if_blocks = 0;
-		
+
 		start_level(lvl_index); //restart level on unsuccessful algorithm and resets command list on fail or win
 	}
 }
