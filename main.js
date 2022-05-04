@@ -895,7 +895,7 @@ function beginIfPressed() {
 	} else if ((if_status == 1) || (if_status == 2)) {
 		console.log('If is Already Open...');
 	} else if (current_if_blocks >= allowed_if_blocks) {
-		console.log('Maximum Number of Loops Already Reached...');
+		console.log('Maximum Number of Ifs Already Reached...');
 	} else {
 		console.log('Opening If Statement...');
 		if_status = 1;
