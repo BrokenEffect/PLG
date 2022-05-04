@@ -85,6 +85,7 @@ var lvl_index = 0;	//level iterator
 
 //Text Var to Display Level Number
 var lvl_text = '';
+var lvl_temp = 0;
 
 //Keeps Track of whether the instructions screen is open.
 var instructions_open = 0;
@@ -352,7 +353,8 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 
 			/* ###  Text Elements  ### */
 				//Text to show Level Number
-			lvl_text = 'Level: ' + lvl_index + 1;
+			lvl_temp = lvl_index + 1;
+			lvl_text = 'Level: ' + lvl_temp;
 			fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
 			stroke('#000000');  //Black Stroke - HTML Color Code #000000
 			textSize(24);
