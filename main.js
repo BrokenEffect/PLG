@@ -1041,7 +1041,7 @@ function decIfCondPressed() {
 	if ((if_status == 1) || (if_status == 2)) {
 		if_cond_num -= 1;
 		if (if_cond_num < 0) {
-			if_cond_num = if_cond_list.lenght - 1;
+			if_cond_num = if_cond_list.length - 1;
 		}
 	} else {
 		console.log('If Statement is Closed...');
