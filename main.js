@@ -291,7 +291,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 
 	background(0, 0, 21); //background color
 
-	if (instruction_open == 0) {
+	if (instructions_open == 0) {
 		for (var i = 0; i < curr_Width; i++){
 			for (var j=0; j<curr_Height;j++){
 
