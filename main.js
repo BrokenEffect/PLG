@@ -99,9 +99,18 @@ var play_click = false;
 //NOTE: lvl-config.txt loads list of levels in order from top to bottom. To add a level, place the txt file name in the desired position in lvl-config.txt. Then place the txt file in the levels directory.
 let lvlConfig_data;
 var lvlName;
+let player_img;
+let enemy_img;
+let goal_img;
+let coin_img;
+
 const lvl_data = [];
 function preload() {
 	lvlConfig_data = loadStrings('./levels/lvl-config.txt');
+	player_img = loadImage('./Graphics/Player.png');
+	enemy_img = loadImage('./Graphics/Spikes.png');
+	goal_img = loadImage('./Graphics/Flag2.png');
+	coin_img = loadImage('./Graphics/Coin.png');
 }
 
 //---------------- SETUP LEVELS -------------------
@@ -296,6 +305,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 	background(0, 0, 21); //background color
 	if (play_click == true) {
 		if (instructions_open == 0) {
+			to_be_drawn = "NONE";
 			for (var i = 0; i < curr_Width; i++){
 				for (var j=0; j<curr_Height;j++){
 
@@ -309,19 +319,37 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 						*/
 					} else if (tiles[i][j] == COIN){
 						fill(55,60,90);
+						to_be_drawn = COIN;
 					} else if (tiles[i][j] == GOAL){
 						fill(204,70,92);
+						to_be_drawn = GOAL;
 					} else if (tiles[i][j] == ENEMY){
 						fill(0,70,90); //this one is red, for example
+						to_be_drawn = ENEMY;
 					}
 
 					if(i==p.x && j == p.y){ //filling in players spot
 						fill(145,70,90);
+						to_be_drawn = PLAYER;
 					}
 					//stroke(0,0,100);  //White Stroke
 					//stroke('#FF8F00');  //Test Color - Should be Orange
 					stroke('#000000');  //Black Stroke
 					rect(cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2),scl,scl);
+					if(to_be_drawn == PLAYER){
+						image(player_img,cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2));
+					} 
+					else if (to_be_drawn == COIN){
+						image(coin_img,cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2));
+					}
+					else if (to_be_drawn == ENEMY){
+						image(enemy_img,cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2));
+					}
+					else if (to_be_drawn == GOAL){
+						image(goal_img,cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2));
+					}
+					
+					to_be_drawn = "NONE";
 					//rect(i*scl,j*scl,scl,scl);
 				}
 			}
