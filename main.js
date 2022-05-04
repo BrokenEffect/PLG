@@ -23,6 +23,9 @@ var coin_goal; //goal for how many coins we need to collect, use -1 if not appli
 var allowed_move_blocks;
 var allowed_if_blocks;
 var allowed_loop_blocks;
+var current_move_blocks = 0;
+var current_if_blocks = 0;
+var current_loop_blocks = 0;
 
 var input1_text;
 
@@ -34,6 +37,7 @@ var commands = [];
 	//These Two variables are used to render the text for the command list.
 var commands_text = '';
 var commands_list_text = [];
+var commands_type = [];
 
   //This is for the current coin amount text
 var coins_collected_text = '';
@@ -65,10 +69,6 @@ var if_cond_list_text = ['Enemy Above', 'Enemy Below'];
 var if_cond_num = 0;
 var if_cond_text = '';
 
-//For / If Priority - Variable Used to Keep Track of which list move commands should be added
-	//if both for and if are open.
-var for_if_priority = 0;  // 0 - None, 1 - For, 2 - If
-
 //allocates a 50x50 grid, only the tiles being used will be displayed
 var tiles = [];
 for (var i = 0; i < MAX_SIZE; i++) {
@@ -78,9 +78,17 @@ for (var i = 0; i < MAX_SIZE; i++) {
 	}
 }
 
-//List of levels
-const levels = [];
-var lvl_index = 0;
+//Level Variables
+const levels = [];	//List of levels
+var lvl_index = 0;	//level iterator
+
+//Text Var to Display Level Number
+var lvl_text = '';
+
+//Keeps Track of whether the instructions screen is open.
+var instructions_open = 0;
+var instructions_text = '';
+
 
 //---------------- PRELOAD FUNCTION -------------------
 //NOTE: lvl-config.txt loads list of levels in order from top to bottom. To add a level, place the txt file name in the desired position in lvl-config.txt. Then place the txt file in the levels directory.
@@ -88,22 +96,19 @@ let lvlConfig_data;
 var lvlName;
 const lvl_data = [];
 function preload() {
-	lvlConfig_data = loadStrings('levels/lvl-config.txt');
-	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvl_data.push(loadStrings("levels/" + lvlConfig_data[i]));
-	}
+	lvlConfig_data = loadStrings('./levels/lvl-config.txt');
 }
 
 //---------------- SETUP LEVELS -------------------
 function lvl_setup(){
+	lvlConfig_data.pop();	//Removes extra space that is for some reason there.
 	for (var i = 0; i < lvlConfig_data.length; i++){
 		levels.push(lvlConfig_data[i]);
 	}
 	for (var i = 0; i < lvlConfig_data.length; i++){
-		lvlName = "levels/" + lvlConfig_data[i];
+		lvlName = "./levels/" + lvlConfig_data[i];
 		loadStrings(lvlName, addLvl);
 	}
-	console.log("Current Levels: " + levels);
 }
 
 function addLvl(result) {
@@ -144,43 +149,48 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 
 	//Play Button
 	mainPlayButton = createButton('Play');
-	mainPlayButton.position(930, 300);
+	mainPlayButton.position(930, 200);
 	mainPlayButton.mousePressed(mainPlayButtonPressed);
+
+	//View Instructions
+	instructionsButton = createButton('View Instructions');
+	instructionsButton.position(200, 200);
+	instructionsButton.mousePressed(instructionsPressed);
 
 	/* ### Buttons to Add Commands ### */
 			/* MovementCommands */
 	//MoveUpButton
 	moveUpButton = createButton('Add Move Up');
-	moveUpButton.position(200, 300);
+	moveUpButton.position(200, 250);
 	moveUpButton.mousePressed(moveUpButtonPressed);
 	//MoveDownButton
 	moveDownButton = createButton('Add Move Down');
-	moveDownButton.position(200, 325);
+	moveDownButton.position(200, 275);
 	moveDownButton.mousePressed(moveDownButtonPressed);
 	//MoveLeftButton
 	moveLeftButton = createButton('Add Move Left');
-	moveLeftButton.position(200, 350);
+	moveLeftButton.position(200, 300);
 	moveLeftButton.mousePressed(moveLeftButtonPressed);
 	//MoveRightButton
 	moveRightButton = createButton('Add Move Right');
-	moveRightButton.position(200, 375);
+	moveRightButton.position(200, 325);
 	moveRightButton.mousePressed(moveRightButtonPressed);
 			/* Loop Commands */
 	//BeginForLoopButton
 	beginForLoopButton = createButton('Begin For Loop');
-	beginForLoopButton.position(200, 400);
+	beginForLoopButton.position(200, 375);
 	beginForLoopButton.mousePressed(beginForLoopPressed);
 	//EndForLoopButton
 	endForLoopButton = createButton('Close For Loop');
-	endForLoopButton.position(200, 425);
+	endForLoopButton.position(200, 400);
 	endForLoopButton.mousePressed(endForLoopPressed);
 	//IncrementLoopNumButton
 	incLoopNumButton = createButton('Add Loop Iteration');
-	incLoopNumButton.position(200, 450);
+	incLoopNumButton.position(200, 425);
 	incLoopNumButton.mousePressed(incLoopNumPressed);
 	//DecrementLoopNumButton
 	decLoopNumButton = createButton('Remove Loop Iteration');
-	decLoopNumButton.position(200, 475);
+	decLoopNumButton.position(200, 450);
 	decLoopNumButton.mousePressed(decLoopNumPressed);
 			/* If Commands */
 	//BeginIfButton
@@ -203,8 +213,13 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 		/*Remove Last Command */
 	//RemoveLastCommandButton
 	removeCommandButton = createButton('Remove Last Command');
-	removeCommandButton.position(200, 600);
+	removeCommandButton.position(200, 625);
 	removeCommandButton.mousePressed(removeCommandPressed);
+
+		/* Run Commands */
+	runCommandsButton = createButton('Run Commands');
+	runCommandsButton.position(200, 650);
+	runCommandsButton.mousePressed(runCommandsPressed);
 
   	//
 	colorMode(HSB, 360, 100, 100); //changes color mode to HSB (aka HSL)
@@ -212,8 +227,6 @@ function setup() { //this gets called once at the start, as soon as the webpage 
 
 
 //---------------- START LEVEL -------------------
-// note: pass in a name like "test-level.txt" and it will
-//			   begin setting up that level, then start the game
 
 
 function start_level(lIndex){
@@ -225,12 +238,8 @@ function start_level(lIndex){
 	for(var i = 0; i < lvl_data[lIndex].length - 1; i++){
 		if (isNaN(lvl_data[lIndex][i][0]) && !(lvl_data[lIndex][i][0] == "-")){
 			curr_Height += 1;
-			console.log("i: " + i, lvl_data[lIndex][i][0]);
 		}
 	}
-
-	console.log("curr_Height: " + curr_Height);
-	console.log("curr_Width:" + curr_Width);
 
 	coin_goal = lvl_data[lIndex].join(",").match(/c/g).length;
 	tmp_data_str = lvl_data[lIndex].join(",").replaceAll(",","");
@@ -242,7 +251,9 @@ function start_level(lIndex){
 	set_pos(coin_pos, COIN);
 	set_pos(enemy_pos, ENEMY);
 	set_pos(goal_pos, GOAL);
-	allowed_move_blocks = lvl_data[lIndex][curr_Height + 2];
+	allowed_move_blocks = lvl_data[lIndex][curr_Height + 1];
+	allowed_if_blocks = lvl_data[lIndex][curr_Height + 2];
+	allowed_loop_blocks = lvl_data[lIndex][curr_Height + 3];
 
 	//Set player position
 	var player_pos = tmp_data_str.indexOf("p");
@@ -279,182 +290,224 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 
 	background(0, 0, 21); //background color
 
-	for (var i = 0; i < curr_Width; i++){
-		for (var j=0; j<curr_Height;j++){
+	if (instruction_open == 0) {
+		for (var i = 0; i < curr_Width; i++){
+			for (var j=0; j<curr_Height;j++){
 
-			if (tiles[i][j] == SPACE){
-				fill(0, 0, 21); //these fill() commands are just color values
-			} else if (tiles[i][j] == WALL){
-				fill(0,0,100);
-				/*
-			} else if (tiles[i][j] == PLAYER){
-				fill(145,70,90);
-				*/
-			} else if (tiles[i][j] == COIN){
-				fill(55,60,90);
-			} else if (tiles[i][j] == GOAL){
-				fill(204,70,92);
-			} else if (tiles[i][j] == ENEMY){
-				fill(0,70,90); //this one is red, for example
-			}
+				if (tiles[i][j] == SPACE){
+					fill(0, 0, 21); //these fill() commands are just color values
+				} else if (tiles[i][j] == WALL){
+					fill(0,0,100);
+					/*
+				} else if (tiles[i][j] == PLAYER){
+					fill(145,70,90);
+					*/
+				} else if (tiles[i][j] == COIN){
+					fill(55,60,90);
+				} else if (tiles[i][j] == GOAL){
+					fill(204,70,92);
+				} else if (tiles[i][j] == ENEMY){
+					fill(0,70,90); //this one is red, for example
+				}
 
-			if(i==p.x && j == p.y){ //filling in players spot
-				fill(145,70,90);
+				if(i==p.x && j == p.y){ //filling in players spot
+					fill(145,70,90);
+				}
+				//stroke(0,0,100);  //White Stroke
+				//stroke('#FF8F00');  //Test Color - Should be Orange
+				stroke('#000000');  //Black Stroke
+				rect(cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2),scl,scl);
+				//rect(i*scl,j*scl,scl,scl);
 			}
-			//stroke(0,0,100);  //White Stroke
-			//stroke('#FF8F00');  //Test Color - Should be Orange
-			stroke('#000000');  //Black Stroke
-			rect(cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2),scl,scl);
-			//rect(i*scl,j*scl,scl,scl);
 		}
 	}
 
 	/* ### Hiding / Showing Elements Based on Level Index ### */
+	if (instructions_open == 0) {
+		if (lvl_index != 0) {
+			/* ### Showing Button Elements ### */
+			moveUpButton.show();
+			moveDownButton.show();
+			moveLeftButton.show();
+			moveRightButton.show();
+			beginForLoopButton.show();
+			endForLoopButton.show();
+			incLoopNumButton.show();
+			decLoopNumButton.show();
+			beginIfButton.show();
+			endIfButton.show();
+			incIfCondButton.show();
+			decIfCondButton.show();
+			removeCommandButton.show();
+			runCommandsButton.show();
+			instructionsButton.show();
 
-	if (lvl_index != 0) {
-		/* ### Showing Button Elements ### */
-		moveUpButton.show();
-		moveDownButton.show();
-		moveLeftButton.show();
-		moveRightButton.show();
-		beginForLoopButton.show();
-		endForLoopButton.show();
-		incLoopNumButton.show();
-		decLoopNumButton.show();
-		beginIfButton.show();
-		endIfButton.show();
-		incIfCondButton.show();
-		decIfCondButton.show();
-		removeCommandButton.show();
+			/* ### Hiding Main Menu Buttons */
+			mainPlayButton.hide();
 
-		/* ### Hiding Main Menu Buttons */
-		mainPlayButton.hide();
+			/* ###  Text Elements  ### */
+				//Text to show Level Number
+			lvl_text = 'Level: ' + lvl_index;
+			fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
+			stroke('#000000');  //Black Stroke - HTML Color Code #000000
+			textSize(24);
+			textWrap(WORD);
+			text(lvl_text, 730, 140, 300);
 
-		/* ###  Text Elements  ### */
-			//Draw Text for Commands Added to Command List
-		commands_text = 'Commands Added: ';
-		if (commands_list_text.length != 0) {
-			for(var k = 0; k < commands_list_text.length; k++) {
-				commands_text = commands_text + commands_list_text[k];  //Adding Command Text to List
-				if (k != (commands_list_text.length - 1)) {
-					commands_text = commands_text + ', '
+				//Text to above Command Buttons
+			textSize(14);
+			textWrap(WORD);
+			text('Add Commands:', 50, 140, 200);
+
+				//Draw Text for Commands Added to Command List
+			commands_text = 'Commands Added: ';
+			if (commands_list_text.length != 0) {
+				for(var k = 0; k < commands_list_text.length; k++) {
+					commands_text = commands_text + commands_list_text[k];  //Adding Command Text to List
+					if (k != (commands_list_text.length - 1)) {
+						commands_text = commands_text + ', '
+					}
 				}
+			} else {
+				commands_text = commands_text + 'None'
+			}
+			//fill('#FFFFFF');  //White Fill - HTML Color Code #FFFFFF
+			//stroke('#000000');  //Black Stroke - HTML Color Code #000000
+			textSize(14);
+			textWrap(WORD);
+			text(commands_text, 50, 700, 1550);
+				//Draw Text for Loop Status
+			loop_status_text = 'Loop Status: ';
+			if (loop_status == false) {
+				loop_status_text = loop_status_text + 'Closed';
+			} else {
+				loop_status_text = loop_status_text + 'Open';
+			}
+			textSize(14);
+			textWrap(WORD);
+			text(loop_status_text, 50, 725, 1550);
+				//Only Draw Loop Command and Loop Num Text if Loop Open
+			if (loop_status == true) {
+					//Draw Text for Loop Commands
+				loop_add_text = 'Loop Commands Added: ';
+				if (loop_add_list_text.length != 0) {
+					for (var m = 0; m < loop_add_list_text.length; m++) {
+						loop_add_text = loop_add_text + loop_add_list_text[m];
+						if (m != (loop_add_list_text.length - 1)) {
+							loop_add_text = loop_add_text + ', ';
+						}
+					}
+				} else {
+					loop_add_text = loop_add_text + 'None';
+				}
+				textSize(14);
+				textWrap(WORD);
+				text(loop_add_text, 50, 750, 1550);
+					//Draw Text for Loop Num
+				loop_num_text = 'Number of Loop Iterations: ' + loop_num;
+				textSize(14);
+				textWrap(WORD);
+				text(loop_num_text, 50, 775, 1550);
+			}
+				//Only Draw If Texts if if is Open
+			if (if_status == 0) {
+				if_status_text = 'If Status: Closed';
+			} else if (if_status == 1) {
+				if_status_text = 'If Status: Open. Adding Commands for True';
+			} else if (if_status == 2) {
+				if_status_text = 'If Status: Open. Adding Commands for False';
+			}
+			textSize(14);
+			textWrap(WORD);
+			text(if_status_text, 50, 800, 1550);
+			if ((if_status == 1)||(if_status == 2)) {
+				if_true_text = 'If (True) Commands Added: ';
+				if (if_true_list_text.length != 0) {
+					for (var m = 0; m < if_true_list_text.length; m++) {
+						if_true_text = if_true_text + if_true_list_text[m];
+						if (m != (if_true_list_text.length - 1)) {
+							if_true_text = if_true_text + ', ';
+						}
+					}
+				} else {
+					if_true_text = if_true_text + 'None';
+				}
+				textSize(14);
+				textWrap(WORD);
+				text(if_true_text, 50, 825, 1550);
+			}
+			if ((if_status == 2)||(if_status == 1)) {
+				if_else_text = 'If (False) Commands Added: ';
+				if (if_else_list_text.length != 0) {
+					for (var m = 0; m < if_else_list_text.length; m++) {
+						if_else_text = if_else_text + if_else_list_text[m];
+						if (m != (if_else_list_text.length - 1)) {
+							if_else_text = if_else_text + ', ';
+						}
+					}
+				} else {
+					if_else_text = if_else_text + 'None';
+				}
+				textSize(14);
+				textWrap(WORD);
+				text(if_else_text, 50, 850, 1550);
+			}
+			if ((if_status == 1)||(if_status == 2)) {
+				if_cond_text = 'If Condition: ';
+				if_cond_text = if_cond_text + if_cond_list_text[if_cond_num];  //Can make this look nicer later.
+				textSize(14);
+				textWrap(WORD);
+				text(if_cond_text, 50, 875, 1550);
 			}
 		} else {
-			commands_text = commands_text + 'None'
+				/* ### Showing Main Menu Buttons ### */
+				mainPlayButton.show();
+
+				/* ### Main Menu Text Elements ### */
+				fill('#FFFFFF');
+				stroke('#000000');  //Black Stroke - HTML Color Code #000000
+				textSize(24);
+				textWrap(WORD);
+				text('Welcome to PLG!', 700, 140, 400);
+
+				/* ### Hiding Button Elements ### */
+				moveUpButton.hide();
+				moveDownButton.hide();
+				moveLeftButton.hide();
+				moveRightButton.hide();
+				beginForLoopButton.hide();
+				endForLoopButton.hide();
+				incLoopNumButton.hide();
+				decLoopNumButton.hide();
+				beginIfButton.hide();
+				endIfButton.hide();
+				incIfCondButton.hide();
+				decIfCondButton.hide();
+				removeCommandButton.hide();
+				runCommandsButton.hide();
+				instructionsButton.hide();
 		}
+	} else {
+		instructions_text = 'Instructions: \nYour goal is to collect all coins and reach the goal without touching an of the enemies / traps.'
+		+ '\nIn order to collect coins and reach the goal. You must give the player a list of commands to execute.'
+		+ '\nYou can give the player commands by using buttons on the left side of the screen.'
+		+ '\nThe basic move commands are: Move Up, Move Down, Move Left, Move Right.'
+		+ '\nYou can have the player execute a series of commands by using a for loop.'
+		+ '\nOpen a for loop by pressing the Begin For Loop button. You can then add basic move commands to the for loop.'
+		+ '\nYou can increment or decrement the number of times the commands in the loop will be run by using the Add Loop Iteration and Remove Loop Iteration buttons.'
+		+ '\nYou can close the loop using the Close For Loop buttons.'
+		+ '\nYou can give the player conditional commands using If Statements in a way similar to a for loop.'
+		+ '\nIf statements have two command lists for True and False cases. Opening an If Statement will allow you to add commands to the True Statement Command List.'
+		+ '\nYou can add commands to the False List by clicking the Continue / Close If Statement. You can close the If Statement by clicking Continue / Close again.'
+		+ '\nClick the Remove Command button to remove the last command in the active command list.'
+		+ '\nRun the commands list by clicking the Run Commands button.';
+
+		fill('#FFFFFF');
 		stroke('#000000');  //Black Stroke - HTML Color Code #000000
 		textSize(14);
 		textWrap(WORD);
-		text(commands_text, 50, 700, 1550);
-			//Draw Text for Loop Status
-		loop_status_text = 'Loop Status: ';
-		if (loop_status == false) {
-			loop_status_text = loop_status_text + 'Closed';
-		} else {
-			loop_status_text = loop_status_text + 'Open';
-		}
-		textSize(14);
-		textWrap(WORD);
-		text(loop_status_text, 50, 725, 1550);
-			//Only Draw Loop Command and Loop Num Text if Loop Open
-		if (loop_status == true) {
-				//Draw Text for Loop Commands
-			loop_add_text = 'Loop Commands Added: ';
-			if (loop_add_list_text.length != 0) {
-				for (var m = 0; m < loop_add_list_text.length; m++) {
-					loop_add_text = loop_add_text + loop_add_list_text[m];
-					if (m != (loop_add_list_text.length - 1)) {
-						loop_add_text = loop_add_text + ', ';
-					}
-				}
-			} else {
-				loop_add_text = loop_add_text + 'None';
-			}
-			textSize(14);
-			textWrap(WORD);
-			text(loop_add_text, 50, 750, 1550);
-				//Draw Text for Loop Num
-			loop_num_text = 'Number of Loop Iterations: ' + loop_num;
-			textSize(14);
-			textWrap(WORD);
-			text(loop_num_text, 50, 775, 1550);
-		}
-			//Only Draw If Texts if if is Open
-		if (if_status == 0) {
-			if_status_text = 'If Status: Closed';
-		} else if (if_status == 1) {
-			if_status_text = 'If Status: Open. Adding Commands for True';
-		} else if (if_status == 2) {
-			if_status_text = 'If Status: Open. Adding Commands for False';
-		}
-		textSize(14);
-		textWrap(WORD);
-		text(if_status_text, 50, 800, 1550);
-		if ((if_status == 1)||(if_status == 2)) {
-			if_true_text = 'If (True) Commands Added: ';
-			if (if_true_list_text.length != 0) {
-				for (var m = 0; m < if_true_list_text.length; m++) {
-					if_true_text = if_true_text + if_true_list_text[m];
-					if (m != (if_true_list_text.length - 1)) {
-						if_true_text = if_true_text + ', ';
-					}
-				}
-			} else {
-				if_true_text = if_true_text + 'None';
-			}
-			textSize(14);
-			textWrap(WORD);
-			text(if_true_text, 50, 825, 1550);
-		}
-		if ((if_status == 2)||(if_status == 1)) {
-			if_else_text = 'If (False) Commands Added: ';
-			if (if_else_list_text.length != 0) {
-				for (var m = 0; m < if_else_list_text.length; m++) {
-					if_else_text = if_else_text + if_else_list_text[m];
-					if (m != (if_else_list_text.length - 1)) {
-						if_else_text = if_else_text + ', ';
-					}
-				}
-			} else {
-				if_else_text = if_else_text + 'None';
-			}
-			textSize(14);
-			textWrap(WORD);
-			text(if_else_text, 50, 850, 1550);
-		}
-		if ((if_status == 1)||(if_status == 2)) {
-			if_cond_text = 'If Condition: ';
-			if_cond_text = if_cond_text + if_cond_list_text[if_cond_num];  //Can make this look nicer later.
-			textSize(14);
-			textWrap(WORD);
-			text(if_cond_text, 50, 875, 1550);
-		}
-	} else {
-			/* ### Showing Main Menu Buttons ### */
-			mainPlayButton.show();
-
-			/* ### Main Menu Text Elements ### */
-			textSize(24);
-			textWrap(WORD);
-			text('Welcome to PLG!', 700, 240, 400);
-
-			/* ### Hiding Button Elements ### */
-			moveUpButton.hide();
-			moveDownButton.hide();
-			moveLeftButton.hide();
-			moveRightButton.hide();
-			beginForLoopButton.hide();
-			endForLoopButton.hide();
-			incLoopNumButton.hide();
-			decLoopNumButton.hide();
-			beginIfButton.hide();
-			endIfButton.hide();
-			incIfCondButton.hide();
-			decIfCondButton.hide();
-			removeCommandButton.hide();
+		text(instructions_text, 400, 140, 800);
 	}
-
 }
 
 
@@ -580,30 +633,21 @@ function button2Pressed() {
 		//MainPlayButtonPressed - Called on Play Button Pressed
 function mainPlayButtonPressed() {
 	lvl_index += 1;
-}	
+}
+
+		//InstructionsPressed
+function instructionsPressed() {
+	if (instructions_open == 1) {
+		instructions_open = 0;
+	} else {
+		instructions_open = 1;
+	}
+}
 
 /* ### Functions For Adding Commands ### */
 		//AddMoveUp - For Add Move Up Button
 function moveUpButtonPressed() {
-	if ((loop_status == true) && (if_status != 0)) {
-		if (for_if_priority == 1) {
-			console.log('Adding Move Up to Loop Commands List...');
-			loop_add.push(moveup);
-			loop_add_list_text.push("Move Up");
-		} else if (for_if_priority == 2) {
-			if (if_status == 1) {
-				console.log('Adding Move Up to If True List...');
-				if_true.push(moveup);
-				if_true_list_text.push("Move Up");
-			} else {
-				console.log('Adding Move Up to If False List...');
-				if_else.push(moveup);
-				if_else_list_text.push("Move Up");
-			}
-		} else {
-			console.log('ERROR. PRIORITY NOT GIVEN...');
-		}
-	} else if (loop_status == true) {
+ 	if (loop_status == true) {
 		console.log('Adding Move Up to Loop Commands List...');
 		loop_add.push(moveup);
 		loop_add_list_text.push("Move Up");
@@ -623,25 +667,7 @@ function moveUpButtonPressed() {
 }
 		//AddMoveDown - For Add Move Down Button
 function moveDownButtonPressed() {
-	if ((loop_status == true) && (if_status != 0)) {
-		if (for_if_priority == 1) {
-			console.log('Adding Move Down to Loop Commands List...');
-			loop_add.push(movedown);
-			loop_add_list_text.push("Move Down");
-		} else if (for_if_priority == 2) {
-			if (if_status == 1) {
-				console.log('Adding Move Down to If True List...');
-				if_true.push(movedown);
-				if_true_list_text.push("Move Down");
-			} else {
-				console.log('Adding Move Down to If False List...');
-				if_else.push(movedown);
-				if_else_list_text.push("Move Down");
-			}
-		} else {
-			console.log('ERROR. PRIORITY NOT GIVEN...');
-		}
-	} else if (loop_status == true) {
+	if (loop_status == true) {
 		console.log('Adding Move Down to Loop Commands List...');
 		loop_add.push(movedown);
 		loop_add_list_text.push("Move Down");
@@ -661,25 +687,7 @@ function moveDownButtonPressed() {
 }
 		//AddMoveLeft - For Add Move Left Button
 function moveLeftButtonPressed() {
-	if ((loop_status == true) && (if_status != 0)) {
-		if (for_if_priority == 1) {
-			console.log('Adding Move Left to Loop Commands List...');
-			loop_add.push(moveleft);
-			loop_add_list_text.push("Move Left");
-		} else if (for_if_priority == 2) {
-			if (if_status == 1) {
-				console.log('Adding Move Left to If True List...');
-				if_true.push(moveleft);
-				if_true_list_text.push("Move Left");
-			} else {
-				console.log('Adding Move Left to If False List...');
-				if_else.push(moveleft);
-				if_else_list_text.push("Move Left");
-			}
-		} else {
-			console.log('ERROR. PRIORITY NOT GIVEN...');
-		}
-	} else if (loop_status == true) {
+	if (loop_status == true) {
 		console.log('Adding Move Left to Loop Commands List...');
 		loop_add.push(moveleft);
 		loop_add_list_text.push("Move Left");
@@ -699,25 +707,7 @@ function moveLeftButtonPressed() {
 }
 		//AddMoveRight - For Add Move Right Button
 function moveRightButtonPressed() {
-	if ((loop_status == true) && (if_status != 0)) {
-		if (for_if_priority == 1) {
-			console.log('Adding Move Right to Loop Commands List...');
-			loop_add.push(moveright);
-			loop_add_list_text.push("Move Right");
-		} else if (for_if_priority == 2) {
-			if (if_status == 1) {
-				console.log('Adding Move Right to If True List...');
-				if_true.push(moveright);
-				if_true_list_text.push("Move Right");
-			} else {
-				console.log('Adding Move Right to If False List...');
-				if_else.push(moveright);
-				if_else_list_text.push("Move Right");
-			}
-		} else {
-			console.log('ERROR. PRIORITY NOT GIVEN...');
-		}
-	} else if (loop_status == true) {
+	if (loop_status == true) {
 		console.log('Adding Move Right to Loop Commands List...');
 		loop_add.push(moveright);
 		loop_add_list_text.push("Move Right");
@@ -737,37 +727,7 @@ function moveRightButtonPressed() {
 }
 			//RemoveCommandPressed - For Remove Command Button
 function removeCommandPressed() {
-	if ((loop_status == true) && (if_status != 0)) {
-		if (for_if_priority == 1) {
-			if (loop_add.length > 0) {
-				console.log('Removing Last Loop Command. Last Loop Command Was:');
-				loop_add.pop();
-				console.log(loop_add_list_text.pop());
-			} else {
-				console.log('Loop Commands List is Already Empty...');
-			}
-		} else if (for_if_priority == 2) {
-			if (if_status == 1) {
-				if (if_true.length > 0) {
-					console.log('Removing Last If True Command. Last Command Was:');
-					if_true.pop();
-					console.log(if_true_list_text.pop());
-				} else {
-					console.log('If True List is Already Empty...');
-				}
-			} else {
-				if (if_else.length > 0) {
-					console.log('Removing Last If False Command. Last Command Was:');
-					if_else.pop();
-					console.log(if_else_list_text.pop());
-				} else {
-					console.log('If False List is Already Empty...');
-				}
-			}
-		} else {
-			console.log('ERROR. PRIORITY NOT GIVEN...');
-		}
-	} else if (loop_status == true) {
+	if (loop_status == true) {
 		if (loop_add.length > 0) {
 			console.log('Removing Last Loop Command. Last Loop Command Was:');
 			loop_add.pop();
@@ -803,13 +763,12 @@ function removeCommandPressed() {
 }
 		//BeinForLoopPressed - Used to Open For Loop
 function beginForLoopPressed() {
-	if (loop_status == true) {
+	if (if_status != 0) {
+		console.log('If Statement Already Open');
+	} else if (loop_status == true) {
 		console.log('Loop is Already Open...');
 	} else {
 		console.log('Opening Loop...');
-		if (if_status != 0) {
-			for_if_priority = 1;
-		}
 		loop_status = true;
 	}
 }
@@ -818,13 +777,8 @@ function endForLoopPressed() {
 	if (loop_status == false) {
 		console.log('Loop is Already Closed...');
 	} else {
-		if (for_if_priority == 2) {
-			console.log('Cannot Close Loop When If Statement is Being Built Inside Loop...');
-		} else if (loop_add.length == 0) {
+		if (loop_add.length == 0) {
 			console.log('No Loop Commands Added. Cancelling Loop Add and Closing Loop...');
-			if (for_if_priority == 1) {
-				for_if_priority = 0;
-			}
 			loop_status = false;
 		} else {
 			loop_add_temp = 'For(' + loop_num + ', [';
@@ -835,19 +789,9 @@ function endForLoopPressed() {
 				}
 			}
 			loop_add_temp = loop_add_temp + '])';
-			if (if_status == 1) {
-				console.log('Adding Loop Command to If True Commands List...');
-				if_true.push(loopcommand.bind(null, loop_num, loop_add));
-				if_true_list_text.push(loop_add_temp);
-			} else if (if_status == 2) {
-				console.log('Adding Loop Command to If False List...');
-				if_true.push(loopcommand.bind(null, loop_num, loop_add));
-				if_true_list_text.push(loop_add_temp);
-			} else {
-				console.log('Adding Loop Command to Commands List...');
-				commands.push(loopcommand.bind(null, loop_num, loop_add));
-				commands_list_text.push(loop_add_temp);
-			}
+			console.log('Adding Loop Command to Commands List...');
+			commands.push(loopcommand.bind(null, loop_num, loop_add));
+			commands_list_text.push(loop_add_temp);
 			console.log('Resetting Loop Vars...');
 			loop_num = 1;
 			loop_add_temp = '';
@@ -855,9 +799,6 @@ function endForLoopPressed() {
 			loop_add_list_text = [];
 			console.log('Closing Loop...');
 			loop_status = false;
-			if (for_if_priority == 1) {
-				for_if_priority = 0;
-			}
 		}
 	}
 }
@@ -891,11 +832,10 @@ function decLoopNumPressed() {
 }
 		//BeginIfPressed - Used to begin creation of If Statement
 function beginIfPressed() {
-	if (if_status == 0) {
+	if (loop_status == true) {
+		console.log('For Loop is Already Open...');
+	} else if (if_status == 0) {
 		console.log('Opening If Statement...');
-		if (loop_status == true) {
-			for_if_priority = 2;
-		}
 		if_status = 1;
 	} else {
 		console.log('If is Already Open...');
@@ -906,64 +846,46 @@ function endIfPressed() {
 	if (if_status == 0) {
 		console.log('If is Already Closed...');
 	} else if (if_status == 1) {
-		if (for_if_priority == 1) {
-			console.log('Cannot Continue If Statement When Loop is Being Built Inside If Statement...');
-		} else if (if_true.length == 0) {
+		if (if_true.length == 0) {
 			console.log('No If Commands Added to True Case. Cancelling If Add and Closing If...');
-			if (for_if_priority == 2) {
-				for_if_priority = 0;
-			}
 			if_status = 0;
 		} else {
 			console.log('Continuing to Else Case...');
 			if_status = 2;
 		}
 	} else {
-		if (for_if_priority == 1) {
-			console.log('Cannot Clost If Statement When Loop is Being Built Inside If Statement...');
-		} else {
-			if_temp = 'If(' + if_cond_list_text[if_cond_num] + ', [';
-			for (var i = 0; i < if_true_list_text.length; i++) {
-				if_temp = if_temp + if_true_list_text[i];
-				if (i != (if_true_list_text.length - 1)) {
-					if_temp = if_temp + ', ';
-				}
-			}
-			if_temp = if_temp + '], [';
-			for (var i = 0; i < if_else_list_text.length; i++) {
-				if_temp = if_temp + if_else_list_text[i];
-				if (i != (if_else_list_text.length - 1)) {
-					if_temp = if_temp + ', ';
-				}
-			}
-			if_temp = if_temp + '])';
-			if (loop_status == true) {
-				console.log('Adding If Command to Loop Commands List...');
-				loop_add.push(ifcommand.bind(null, if_cond_list[if_cond_num], if_true, if_else));
-				loop_add_list_text.push(if_temp);
-			} else {
-				console.log('Adding If Command to Commands List...');
-				commands.push(ifcommand.bind(null, if_cond_list[if_cond_num], if_true, if_else));
-				commands_list_text.push(if_temp);
-			}
-			console.log('Resetting if Vars...');
-			if_temp = '';
-			if_cond_num = 0;
-			if_true = [];
-			if_true_list_text = [];
-			if_else = [];
-			if_else_list_text = [];
-			console.log('Closing If Statement...');
-			if_status = 0;
-			if (for_if_priority == 2) {
-				for_if_priority = 0;
+		if_temp = 'If(' + if_cond_list_text[if_cond_num] + ', [';
+		for (var i = 0; i < if_true_list_text.length; i++) {
+			if_temp = if_temp + if_true_list_text[i];
+			if (i != (if_true_list_text.length - 1)) {
+				if_temp = if_temp + ', ';
 			}
 		}
+		if_temp = if_temp + '], [';
+		for (var i = 0; i < if_else_list_text.length; i++) {
+			if_temp = if_temp + if_else_list_text[i];
+			if (i != (if_else_list_text.length - 1)) {
+				if_temp = if_temp + ', ';
+			}
+		}
+		if_temp = if_temp + '])';
+		console.log('Adding If Command to Commands List...');
+		commands.push(ifcommand.bind(null, if_cond_list[if_cond_num], if_true, if_else));
+		commands_list_text.push(if_temp);
+		console.log('Resetting if Vars...');
+		if_temp = '';
+		if_cond_num = 0;
+		if_true = [];
+		if_true_list_text = [];
+		if_else = [];
+		if_else_list_text = [];
+		console.log('Closing If Statement...');
+		if_status = 0;
 	}
 }
 		//IncIfCondPressed - Used to Increment If Condition List
 function incIfCondPressed() {
-	if ((if_status) == 1 || (if_status == 2)) {
+	if ((if_status == 1) || (if_status == 2)) {
 		if_cond_num += 1;
 		if (if_cond_num >= if_cond_list.length) {
 			if_cond_num = 0;
@@ -974,7 +896,7 @@ function incIfCondPressed() {
 }
 		//DecIFCondPressed - Used to Decrement If Condition List
 function decIfCondPressed() {
-	if ((if_status) == 1 || (if_status == 2)) {
+	if ((if_status == 1) || (if_status == 2)) {
 		if_cond_num -= 1;
 		if (if_cond_num < 0) {
 			if_cond_num = if_cond_list.lenght - 1;
@@ -982,6 +904,12 @@ function decIfCondPressed() {
 	} else {
 		console.log('If Statement is Closed...');
 	}
+}
+
+		//RunCommandsPressed - Runs the Command List
+function runCommandsPressed() {
+	console.log("Running Commands List");
+	run_commands();
 }
 
 // COMMANDS LIST
