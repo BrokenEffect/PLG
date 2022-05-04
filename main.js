@@ -338,7 +338,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 					rect(cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2),scl,scl);
 					if(to_be_drawn == PLAYER){
 						image(player_img,cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2));
-					} 
+					}
 					else if (to_be_drawn == COIN){
 						image(coin_img,cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2));
 					}
@@ -348,7 +348,7 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 					else if (to_be_drawn == GOAL){
 						image(goal_img,cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2));
 					}
-					
+
 					to_be_drawn = "NONE";
 					//rect(i*scl,j*scl,scl,scl);
 				}
@@ -920,7 +920,7 @@ function endForLoopPressed() {
 			console.log('Adding Loop Command to Commands List...');
 			commands.push(loopcommand.bind(null, loop_num, loop_add));
 			commands_list_text.push(loop_add_temp);
-			commands_type.push(['F', loop_add.length()]);
+			commands_type.push(['F', loop_add.length]);
 			console.log('Resetting Loop Vars...');
 			loop_num = 1;
 			loop_add_temp = '';
@@ -1003,7 +1003,7 @@ function endIfPressed() {
 		if_temp = if_temp + '])';
 		console.log('Adding If Command to Commands List...');
 		commands.push(ifcommand.bind(null, if_cond_list[if_cond_num], if_true, if_else));
-		commands_type.push(['I', if_true.length(), if_else.length()]);
+		commands_type.push(['I', if_true.length, if_else.length]);
 		commands_list_text.push(if_temp);
 		console.log('Resetting if Vars...');
 		if_temp = '';
