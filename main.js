@@ -735,7 +735,10 @@ function moveUpButtonPressed() {
 	if (current_move_blocks >= allowed_move_blocks) {
 		console.log('Max Number of Move Blocks Already Reached');
 	} else {
-		current_move_blocks += 1;
+		if (if_status == 0) {
+			current_move_blocks += 1;
+		}
+		
 	 	if (loop_status == true) {
 			console.log('Adding Move Up to Loop Commands List...');
 			loop_add.push(moveup);
@@ -761,7 +764,9 @@ function moveDownButtonPressed() {
 	if (current_move_blocks >= allowed_move_blocks) {
 		console.log('Max Number of Move Blocks Already Reached');
 	} else {
-		current_move_blocks += 1;
+		if (if_status == 0) {
+			current_move_blocks += 1;
+		}
 		if (loop_status == true) {
 			console.log('Adding Move Down to Loop Commands List...');
 			loop_add.push(movedown);
@@ -787,7 +792,9 @@ function moveLeftButtonPressed() {
 	if (current_move_blocks >= allowed_move_blocks) {
 		console.log('Max Number of Move Blocks Already Reached');
 	} else {
-		current_move_blocks += 1;
+		if (if_status == 0) {
+			current_move_blocks += 1;
+		}
 		if (loop_status == true) {
 			console.log('Adding Move Left to Loop Commands List...');
 			loop_add.push(moveleft);
@@ -813,7 +820,9 @@ function moveRightButtonPressed() {
 	if (current_move_blocks >= allowed_move_blocks) {
 		console.log('Max Number of Move Blocks Already Reached');
 	} else {
-		current_move_blocks += 1;
+		if (if_status == 0) {
+			current_move_blocks += 1;
+		}
 		if (loop_status == true) {
 			console.log('Adding Move Right to Loop Commands List...');
 			loop_add.push(moveright);
@@ -841,7 +850,7 @@ function removeCommandPressed() {
 			console.log('Removing Last Loop Command. Last Loop Command Was:');
 			loop_add.pop();
 			console.log(loop_add_list_text.pop());
-			current_move_blocks -= 1;
+			//current_move_blocks -= 1;
 		} else {
 			console.log('Loop Commands List is Already Empty...');
 		}
@@ -850,7 +859,7 @@ function removeCommandPressed() {
 			console.log('Removing Last If True Command. Last Command Was:');
 			if_true.pop();
 			console.log(if_true_list_text.pop());
-			current_move_blocks -= 1;
+			//current_move_blocks -= 1;
 		} else {
 			console.log('If True List is Already Empty...');
 		}
@@ -859,7 +868,7 @@ function removeCommandPressed() {
 			console.log('Removing Last If False Command. Last Command Was:');
 			if_else.pop();
 			console.log(if_else_list_text.pop());
-			current_move_blocks -= 1;
+			//current_move_blocks -= 1;
 		} else {
 			console.log('If False List is Already Empty...');
 		}
@@ -878,8 +887,8 @@ function removeCommandPressed() {
 			}
 			if (temp_type[0] == 'I') {
 				current_if_blocks -= 1;
-				current_move_blocks -= temp_type[1];
-				current_move_blocks -= temp_type[2];
+				//current_move_blocks -= temp_type[1];
+				//current_move_blocks -= temp_type[2];
 			}
 		} else {
 			console.log('Commands List is Already Empty...');
