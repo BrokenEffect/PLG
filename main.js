@@ -363,15 +363,15 @@ function draw () { // this function runs over and over at 60fps (or whatever we 
 				//Show Current And Available Move Commands
 			textSize(14);
 			textWrap(WORD);
-			text('Current / Maximum Move Commands: ' + current_move_blocks + "/" + allowed_move_blocks, 1200, 140, 200);
+			text('Current / Maximum Move Commands: ' + current_move_blocks + "/" + allowed_move_blocks, 1200, 140, 350);
 			//Show Current And Available Loop Commands
 			textSize(14);
 			textWrap(WORD);
-			text('Current / Maximum For Loops: ' + current_loop_blocks + "/" + allowed_loop_blocks, 1200, 165, 200);
+			text('Current / Maximum For Loops: ' + current_loop_blocks + "/" + allowed_loop_blocks, 1200, 165, 350);
 			//Show Current And Available Loop Commands
 			textSize(14);
 			textWrap(WORD);
-			text('Current / Maximum If Statements: ' + current_if_blocks + "/" + allowed_if_blocks, 1200, 190, 200);
+			text('Current / Maximum If Statements: ' + current_if_blocks + "/" + allowed_if_blocks, 1200, 190, 350);
 
 				//Draw Text for Commands Added to Command List
 			commands_text = 'Commands Added: ';
