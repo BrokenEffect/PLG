@@ -90,6 +90,9 @@ var lvl_text = '';
 var instructions_open = 0;
 var instructions_text = '';
 
+	//Keep Track of Menu Screen
+var play_click = false;
+
 
 //---------------- PRELOAD FUNCTION -------------------
 //NOTE: lvl-config.txt loads list of levels in order from top to bottom. To add a level, place the txt file name in the desired position in lvl-config.txt. Then place the txt file in the levels directory.
@@ -290,42 +293,43 @@ function set_pos(data_pos, symbol){ //Finds coords based off index and sets the 
 function draw () { // this function runs over and over at 60fps (or whatever we set our framerate to)
 
 	background(0, 0, 21); //background color
+	if (play_click == true) {
+		if (instructions_open == 0) {
+			for (var i = 0; i < curr_Width; i++){
+				for (var j=0; j<curr_Height;j++){
 
-	if (instructions_open == 0) {
-		for (var i = 0; i < curr_Width; i++){
-			for (var j=0; j<curr_Height;j++){
+					if (tiles[i][j] == SPACE){
+						fill(0, 0, 21); //these fill() commands are just color values
+					} else if (tiles[i][j] == WALL){
+						fill(0,0,100);
+						/*
+					} else if (tiles[i][j] == PLAYER){
+						fill(145,70,90);
+						*/
+					} else if (tiles[i][j] == COIN){
+						fill(55,60,90);
+					} else if (tiles[i][j] == GOAL){
+						fill(204,70,92);
+					} else if (tiles[i][j] == ENEMY){
+						fill(0,70,90); //this one is red, for example
+					}
 
-				if (tiles[i][j] == SPACE){
-					fill(0, 0, 21); //these fill() commands are just color values
-				} else if (tiles[i][j] == WALL){
-					fill(0,0,100);
-					/*
-				} else if (tiles[i][j] == PLAYER){
-					fill(145,70,90);
-					*/
-				} else if (tiles[i][j] == COIN){
-					fill(55,60,90);
-				} else if (tiles[i][j] == GOAL){
-					fill(204,70,92);
-				} else if (tiles[i][j] == ENEMY){
-					fill(0,70,90); //this one is red, for example
+					if(i==p.x && j == p.y){ //filling in players spot
+						fill(145,70,90);
+					}
+					//stroke(0,0,100);  //White Stroke
+					//stroke('#FF8F00');  //Test Color - Should be Orange
+					stroke('#000000');  //Black Stroke
+					rect(cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2),scl,scl);
+					//rect(i*scl,j*scl,scl,scl);
 				}
-
-				if(i==p.x && j == p.y){ //filling in players spot
-					fill(145,70,90);
-				}
-				//stroke(0,0,100);  //White Stroke
-				//stroke('#FF8F00');  //Test Color - Should be Orange
-				stroke('#000000');  //Black Stroke
-				rect(cWidth/2+i*scl-(curr_Width*scl/2),cHeight/2+j*scl-(curr_Height*scl/2),scl,scl);
-				//rect(i*scl,j*scl,scl,scl);
 			}
 		}
 	}
 
 	/* ### Hiding / Showing Elements Based on Level Index ### */
 	if (instructions_open == 0) {
-		if (lvl_index != 0) {
+		if (play_click == true) {
 			/* ### Showing Button Elements ### */
 			moveUpButton.show();
 			moveDownButton.show();
@@ -599,10 +603,19 @@ async function run_commands() {
 		console.log("Algorithm successful!");
 		commands = [];
 		commands_list_text = [];
+		commands_type = [];
+		current_move_blocks = 0;
+		current_loop_blocks = 0;
+		current_if_blocks = 0;
 	} else {
 		console.log("Algorithm failed!");
 		commands = [];
 		commands_list_text = [];
+		commands_type = [];
+		current_move_blocks = 0;
+		current_loop_blocks = 0;
+		current_if_blocks = 0;
+		
 		start_level(lvl_index); //restart level on unsuccessful algorithm and resets command list on fail or win
 	}
 }
@@ -667,7 +680,7 @@ function button2Pressed() {
 /* ### Functions For Title Screen ### */
 		//MainPlayButtonPressed - Called on Play Button Pressed
 function mainPlayButtonPressed() {
-	lvl_index += 1;
+	play_click = true;
 }
 
 		//InstructionsPressed
