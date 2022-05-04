@@ -23,6 +23,9 @@ var coin_goal; //goal for how many coins we need to collect, use -1 if not appli
 var allowed_move_blocks;
 var allowed_if_blocks;
 var allowed_loop_blocks;
+var current_move_blocks = 0;
+var current_if_blocks = 0;
+var current_loop_blocks = 0;
 
 var input1_text;
 
@@ -34,6 +37,7 @@ var commands = [];
 	//These Two variables are used to render the text for the command list.
 var commands_text = '';
 var commands_list_text = [];
+var commands_type = [];
 
   //This is for the current coin amount text
 var coins_collected_text = '';
@@ -82,7 +86,7 @@ var lvl_index = 0;	//level iterator
 var lvl_text = '';
 
 //Keeps Track of whether the instructions screen is open.
-var instruction_open = 0;
+var instructions_open = 0;
 var instructions_text = '';
 
 
